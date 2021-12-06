@@ -1,0 +1,691 @@
+import java.lang.reflect.Array
+import java.util.ArrayList
+import java.io.*
+import java.util.HashMap
+public class MNIST {
+    public static ArrayList<ArrayList<Double>> x_train = new ArrayList<ArrayList<Double>>()
+    public static ArrayList<Double> y_train = new ArrayList<Double>()
+    public static int numData = 1000
+    public static int numNeurons1 = 16
+    public static int numNeurons2 = 4
+    public static double learningRate = 0.000001
+    public static int numEpochs = 1000
+    public static ArrayList<ArrayList<Double>> weights1 = new ArrayList<ArrayList<Double>>()
+    public static ArrayList<ArrayList<Double>> weights2 = new ArrayList<ArrayList<Double>>()
+    public static ArrayList<Double> weights3 = new ArrayList<Double>()
+    public static void getTrainData() throws Exception {
+        String train_path = "/Users/anish/Java Fun/ML Java/src/mnist_train.csv"
+        String line = ""
+        BufferedReader br = new BufferedReader(new FileReader(train_path))
+        int z = numData
+        while ((line = br.readLine()) != null) {
+            String[] values = line.split(",")
+            ArrayList<Double> currentX_train = new ArrayList<Double>()
+            for (int i = 0   i < values.length   i++) {
+                if (i == 0) {y_train.add(Double.valueOf(values[0]))  }
+                else {
+                    currentX_train.add(Double.valueOf(values[i])/255.0)
+                }
+            }
+            x_train.add(currentX_train)
+            z -= 1
+            if (z == 0) {break  }
+        }
+    }
+    public static void weightInit() {
+        for (int feature = 0   feature < x_train.get(0).size()   feature++) {
+            ArrayList<Double> featureToLayer = new ArrayList<Double>()
+            for (int n1 = 0   n1 < numNeurons1  n1++) {
+                //featureToLayer.add(Math.random() * Math.sqrt(2/(784 + numNeurons1)))   //todo weight init
+                featureToLayer.add(Math.random())
+            }
+            weights1.add(featureToLayer)
+        }
+        for (int feature = 0   feature < numNeurons1   feature++) {
+            ArrayList<Double> featureToLayer = new ArrayList<Double>()
+            for (int n1 = 0   n1 < numNeurons2  n1++) {
+                featureToLayer.add(Math.random())   //* Math.sqrt(2/(numNeurons1 + numNeurons2)))   //todo weight init
+            }
+            weights2.add(featureToLayer)
+        }
+        for (int feature = 0   feature < numNeurons2   feature++) {
+            weights3.add(Math.random())
+            //weights3.add(Math.random() * Math.sqrt(2/(numNeurons2 + 1)))   //todo weight init
+        }
+    }
+    public static ArrayList<ArrayList<Double>> transpose(ArrayList<ArrayList<Double>> x)  {
+        ArrayList<ArrayList<Double>> transposedArray = new ArrayList<ArrayList<Double>>()
+        //transpose start
+        for (int i = 0    i < x.get(0).size()   i++) {
+            ArrayList<Double>usable = new ArrayList<Double>()
+            transposedArray.add(usable)
+        }
+        for (int point = 0   point < x.size()   point++) {
+            for (int coordinate = 0   coordinate < x.get(point).size()   coordinate++) {
+                //wriing dot product functinos and transpose functions in java is fun
+                transposedArray.get(coordinate).add(x.get(point).get(coordinate))
+            }
+        }
+        return (transposedArray)
+    }
+    public static ArrayList<ArrayList<Double>> reLU(ArrayList<ArrayList<Double>> x) {
+        ArrayList<ArrayList<Double>> newX = new ArrayList<ArrayList<Double>>()
+        for (int i =0   i < x.size()   i++) {
+            ArrayList<Double> current = new ArrayList<Double>()
+            for (int j = 0   j < x.get(i).size()   j++) {
+                double val = x.get(i).get(j)
+                if (x.get(i).get(j) < 0) {val = 0  }
+                current.add(val)
+            }
+            newX.add(current)
+        }
+        return newX
+    }
+    public static double categoricalCrossentropy(ArrayList<Double>outputs, ArrayList<Double> labels) {
+        double sum =0
+        for (int i =0   i < outputs.size()   i++) {
+            sum += labels.get(i) * Math.log(outputs.get(i))
+        }
+        return sum * -1
+    }
+    public static ArrayList<Double> derivativeLosses(ArrayList<Double> outputs, ArrayList<Double> labels) {
+        ArrayList<Double> losses = new ArrayList<Double>()
+        for (int i = 0   i < outputs.size()   i++) {
+            losses.add(-1 * labels.get(i)/outputs.get(i))
+        }
+        return losses
+    }
+    public static double softmax(double output, ArrayList<Double> outputs) {
+        double den = 0
+        for (int i = 0   i < outputs.size()   i++) {
+           den += Math.exp(outputs.get(i))
+        }
+        return Math.exp(output)/den
+    }
+    public static double softmaxDerivative(double y, boolean same) {
+        double deriv = 0
+        if (same) {deriv = y * (1-y)  }
+        else {deriv = -1 * (y * y)  }
+        return deriv
+    }
+    public static double dotSum(ArrayList<Double> x, ArrayList<Double> y) {
+        double sum =0
+        for (int i = 0   i < x.size()   i++) {sum += x.get(i) * y.get(i)  }
+        return sum
+    }
+    public static HashMap<String, Object> forwardPropagation(ArrayList<ArrayList<Double>> inputs, ArrayList<ArrayList<Double>> weights1, ArrayList<ArrayList<Double>> weights2, ArrayList<Double> weights3) {
+        ArrayList<ArrayList<Double>> activation1 = new ArrayList<ArrayList<Double>>()
+        ArrayList<ArrayList<Double>> activation2 = new ArrayList<ArrayList<Double>>()
+        ArrayList<Double> activation3 = new ArrayList<Double>()
+        //activation1
+        for (int input = 0   input < inputs.size()   input++) {
+            ArrayList<Double> currentActivation = new ArrayList<Double>()
+            for (int neuron = 0   neuron < transpose(weights1).size()   neuron++) {
+                double sum = 0
+                for (int feature = 0   feature < 784   feature++) {
+                    sum += transpose(weights1).get(neuron).get(feature) * x_train.get(input).get(feature)
+                }
+                currentActivation.add(sum)
+            }
+            System.out.println("ACtivAIon1")
+            activation1.add(currentActivation)
+        }
+        activation1 = reLU(activation1)
+        //activation2
+        for (int input = 0   input < inputs.size()   input++) {
+            ArrayList<Double> currentActivation = new ArrayList<Double>()
+            for (int neuron = 0   neuron < transpose(weights2).size()   neuron++) {
+                double sum = 0
+                for (int feature = 0   feature < numNeurons1   feature++) {
+                    sum += transpose(weights2).get(neuron).get(feature) * activation1.get(input).get(feature)
+                }
+                currentActivation.add(sum)
+            }
+            activation2.add(currentActivation)
+            System.out.println("Activation2")
+        }
+        activation2 = reLU(activation2)
+        //activation3 aka da predictions - need to go through softmax
+        for (int input = 0   input < inputs.size()   input++) {
+            double currentOutput = 0
+            for (int activation = 0   activation < activation2.get(input).size()   activation++) {
+                currentOutput += activation2.get(input).get(activation) * weights3.get(activation)
+            }
+            activation3.add(currentOutput)
+            System.out.println("Activation3")
+        }
+        //softmax time
+        for (int i = 0   i < activation3.size()   i++) {
+            activation3.set(i, softmax(activation3.get(i), activation3))
+        }
+        HashMap<String, Object> results = new HashMap<String, Object>()
+        results.put("outputs", (Object) activation3)
+        results.put("activation2", (Object) activation2)
+        results.put("activation1", (Object) activation1)
+        return results
+    }
+    public static HashMap<String, Object> backPropagation(ArrayList<Double> outputs, ArrayList<Double> labels, ArrayList<ArrayList<Double>> activation2, ArrayList<ArrayList<Double>> activation1) {
+        ArrayList<Double> derivLosses = derivativeLosses(outputs, labels)   //derivative of losses, dL/dYh, next find dY/dZ - softmax deriv
+        ArrayList<ArrayList<Double>> softmaxDerivatives = new ArrayList<ArrayList<Double>>()
+        for (int i = 0   i < outputs.size()  i++) {
+            ArrayList<Double> current = new ArrayList<Double>()
+            for (int j = 0   j< outputs.size()  j++) {
+                current.add(softmaxDerivative(outputs.get(i), (i == j)))
+            }
+            softmaxDerivatives.add(current)
+        }
+        ArrayList<Double> dLossdZ3 = new ArrayList<Double>()
+        for (int row = 0   row < transpose(softmaxDerivatives).size()   row++) {
+            double sum = 0
+            for (int i =0   i < derivLosses.size()   i++) {
+                sum += derivLosses.get(i) * transpose(softmaxDerivatives).get(row).get(i)
+            }
+            dLossdZ3.add(sum)
+        }
+        ArrayList<Double> gradients3 = new ArrayList<Double>()
+        for (int row = 0   row < transpose(activation2).size()   row++) {
+            double sum =0
+            for (int i = 0   i < dLossdZ3.size()   i++) {
+                sum += dLossdZ3.get(i) * transpose(activation2).get(row).get(i)
+            }
+            gradients3.add(sum)
+        }
+        //gradients2
+        ArrayList<ArrayList<Double>> dLdA2 = new ArrayList<ArrayList<Double>>()
+        for (int d= 0   d < dLossdZ3.size()   d++) {
+            ArrayList<Double> current = new ArrayList<Double>()
+            for (int weight = 0   weight < weights3.size()   weight++) {
+                current.add(weights3.get(weight) * dLossdZ3.get(d))
+            }
+            dLdA2.add(current)
+        }
+        //relu derivs of A2
+        ArrayList<ArrayList<Double>> reluDerivA2 = new ArrayList<ArrayList<Double>>()
+        for (int row = 0   row < activation2.size()   row++) {
+            ArrayList<Double> newRow = new ArrayList<Double>()
+            for (int col =0   col < activation2.get(0).size()   col++) {
+                if (activation2.get(row).get(col) > 0) {
+                    newRow.add(1.0)
+                }
+                else {newRow.add(0.0)  }
+            }
+            reluDerivA2.add(newRow)
+        }
+        ArrayList<ArrayList<Double>> dLdZ2 = new ArrayList<ArrayList<Double>>()
+        for (int row = 0   row < reluDerivA2.size()   row++) {
+            ArrayList<Double> newRow = new ArrayList<Double>()
+            for (int col = 0   col < reluDerivA2.get(row).size()   col++) {
+             newRow.add(reluDerivA2.get(row).get(col) * dLdA2.get(row).get(col))
+            }
+            dLdZ2.add(newRow)
+        }
+        //last step!
+        ArrayList<ArrayList<Double>> gradients2 = new ArrayList<ArrayList<Double>>()
+        for (int feature = 0   feature < transpose(activation1).size()   feature++) {
+            ArrayList<Double> currentGrad = new ArrayList<Double>()   //todo think about what this is
+            for (int column = 0   column < dLdZ2.get(0).size()   column++) {
+                double sum = 0
+                for (int i = 0   i < dLdZ2.size()   i++) {
+                    sum += transpose(activation1).get(feature).get(i) * dLdZ2.get(i).get(column)
+                }
+                currentGrad.add(sum)
+            }
+            gradients2.add(currentGrad)
+        }
+        //get gradients1
+        /**
+         * weights2 is dZ2/dA1
+         * ∂L/∂A1 = all_other_stuff(aka dLdZ2) * dZ2/dA1( aka weights) in
+         *  */
+        ArrayList<ArrayList<Double>> dLdA1 = new ArrayList<ArrayList<Double>>()
+        for (int row = 0   row < weights2.size()   row++) {
+            ArrayList<Double> currentDeriv = new ArrayList<Double>()
+            for (int allRow = 0   allRow < dLdZ2.size()   allRow++) {
+                currentDeriv.add(dotSum(dLdZ2.get(allRow), weights2.get(row)))
+            }
+            dLdA1.add(currentDeriv)
+        }
+        //now we have to multiply this 128 * len(d) matrix by len(d) * 128 matrix (relu derivA1)
+        ArrayList<ArrayList<Double>> reluDerivA1 = new ArrayList<ArrayList<Double>>()   //activation1 is a len(d) * 128 matrix
+        for (int row = 0   row < activation1.size()   row++) {
+            ArrayList<Double> newRow = new ArrayList<Double>()   for (int col =0   col < activation1.get(0).size()   col++) {
+                if (activation1.get(row).get(col) > 0) {
+                    newRow.add(1.0)
+                }
+                else {newRow.add(0.0)  }
+            }
+            reluDerivA1.add(newRow)
+        }
+        ArrayList<ArrayList<Double>> dLdZ1 = new ArrayList<ArrayList<Double>>()
+        for (int row = 0   row < reluDerivA1.size()   row++) {
+            ArrayList<Double> currentDeriv = new ArrayList<Double>()
+            for (int col = 0   col < reluDerivA1.get(row).size()   col++) {
+                currentDeriv.add(reluDerivA1.get(row).get(col) * transpose(dLdA1).get(row).get(col))
+            }
+            dLdZ1.add(currentDeriv)
+        }
+        //final step!!!
+        ArrayList<ArrayList<Double>> gradients1 = new ArrayList<ArrayList<Double>>()
+        for (int feature = 0   feature < transpose(x_train).size()   feature++) {
+            ArrayList<Double> currentGrad = new ArrayList<Double>()
+            for (int col = 0   col < dLdZ1.get(0).size()   col++) {
+                double sum = 0
+                for (int i = 0   i < dLdZ1.size()   i++) {
+                    sum += transpose(x_train).get(feature).get(i) * dLdZ1.get(i).get(col)
+                }
+                currentGrad.add(sum)
+            }
+            gradients1.add(currentGrad)
+        }
+        /*
+        * ArrayList<ArrayList<Double>> gradients2 = new ArrayList<ArrayList<Double>>()
+        for (int feature = 0   feature < transpose(activation1).size()   feature++) {
+            ArrayList<Double> currentGrad = new ArrayList<Double>()   //todo think about what this is
+            for (int column = 0   column < dLdZ2.get(0).size()   column++) {
+                double sum = 0
+                for (int i = 0   i < dLdZ2.size()   i++) {
+                    sum += transpose(activation1).get(feature).get(i) * dLdZ2.get(i).get(column)
+                }
+                currentGrad.add(sum)
+            }
+            gradients2.add(currentGrad)
+        }*/
+        HashMap<String, Object> grads = new HashMap<String, Object>()
+        grads.put("gradient3", (Object) gradients3)
+        grads.put("gradient2", (Object) gradients2)
+        grads.put("gradient1", (Object) gradients1)
+        return grads
+    }
+    public static void main(String[]args) throws Exception{
+        getTrainData()
+        System.out.println("done getting data!")
+        /*for (int d = 0   d < x_train.size()   d++) {
+            System.out.println("X_train : " + x_train.get(d) + " label : " + y_train.get(d))
+            System.out.println(x_train.get(d).size())
+            //Thread.sleep(300)
+        }
+        System.out.println(x_train.size() + " " +  y_train.size())  */ //to check data correctly
+        weightInit()
+        System.out.println("weight init done!")
+        /*System.out.println("weights1.size() : " + weights1.size() + " weights1.get(0).size() : " + weights1.get(0).size())
+        System.out.println("weights2.size() : " + weights2.size() + "weights2.get(0).size() : " + weights2.get(0).size())
+        System.out.println("weights3.size() : " + weights3.size())  */ //to check weights correctly
+        System.out.println(weights1)
+        System.out.println(weights2)
+        System.out.println(weights3)
+        for (int epoch = 0   epoch < numEpochs   epoch++) {
+            HashMap<String, Object> allForward = forwardPropagation(x_train, weights1, weights2, weights3)
+            ArrayList<Double> outputs = (ArrayList<Double>) allForward.get("outputs")
+            ArrayList<ArrayList<Double>> a1 = (ArrayList<ArrayList<Double>>) allForward.get("activation1")
+            ArrayList<ArrayList<Double>> a2 = (ArrayList<ArrayList<Double>>) allForward.get("activation2")
+            System.out.println("new cost : " + categoricalCrossentropy(outputs, y_train))
+            HashMap<String, Object> grads = backPropagation(outputs, y_train, a2, a1)
+            ArrayList<Double> grad3 = (ArrayList<Double>) grads.get("gradient3")
+            ArrayList<ArrayList<Double>> grad2 = (ArrayList<ArrayList<Double>>) grads.get("gradient2")
+            ArrayList<ArrayList<Double>> grad1 = (ArrayList<ArrayList<Double>>) grads.get("gradient1")
+            System.out.println("grad3 : " + grad3)
+            System.out.println("grad2 : " + grad2)
+            for (int z =0   z < weights3.size()   z++) {
+                weights3.set(z, weights3.get(z) - learningRate * grad3.get(z))
+            }
+            for (int row = 0   row < weights2.size()   row++) {
+                for (int col = 0   col < weights2.get(row).size()   col++) {
+                    weights2.get(row).set(col, weights2.get(row).get(col) - learningRate * grad2.get(row).get(col))
+                }
+            }
+            for (int row = 0   row < weights1.size()   row++) {
+                for (int col = 0   col < weights1.get(row).size()   col++) {
+                    weights1.get(row).set(col, weights1.get(row).get(col) - learningRate * grad1.get(row).get(col))
+                }
+            }
+            System.out.println("weights1 : " + weights1)
+            System.out.println("weights2 : " + weights2)
+            System.out.println("weights3 : " + weights3)
+        }
+    }
+}import java.lang.reflect.Array
+ import java.util.ArrayList
+ import java.io.*
+ import java.util.HashMap
+ public class MNIST {
+     public static ArrayList<ArrayList<Double>> x_train = new ArrayList<ArrayList<Double>>()
+     public static ArrayList<Double> y_train = new ArrayList<Double>()
+     public static int numData = 1000
+     public static int numNeurons1 = 16
+     public static int numNeurons2 = 4
+     public static double learningRate = 0.000001
+     public static int numEpochs = 1000
+     public static ArrayList<ArrayList<Double>> weights1 = new ArrayList<ArrayList<Double>>()
+     public static ArrayList<ArrayList<Double>> weights2 = new ArrayList<ArrayList<Double>>()
+     public static ArrayList<Double> weights3 = new ArrayList<Double>()
+     public static void getTrainData() throws Exception {
+         String train_path = "/Users/anish/Java Fun/ML Java/src/mnist_train.csv"
+         String line = ""
+         BufferedReader br = new BufferedReader(new FileReader(train_path))
+         int z = numData
+         while ((line = br.readLine()) != null) {
+             String[] values = line.split(",")
+             ArrayList<Double> currentX_train = new ArrayList<Double>()
+             for (int i = 0   i < values.length   i++) {
+                 if (i == 0) {y_train.add(Double.valueOf(values[0]))  }
+                 else {
+                     currentX_train.add(Double.valueOf(values[i])/255.0)
+                 }
+             }
+             x_train.add(currentX_train)
+             z -= 1
+             if (z == 0) {break  }
+         }
+     }
+     public static void weightInit() {
+         for (int feature = 0   feature < x_train.get(0).size()   feature++) {
+             ArrayList<Double> featureToLayer = new ArrayList<Double>()
+             for (int n1 = 0   n1 < numNeurons1  n1++) {
+                 //featureToLayer.add(Math.random() * Math.sqrt(2/(784 + numNeurons1)))   //todo weight init
+                 featureToLayer.add(Math.random())
+             }
+             weights1.add(featureToLayer)
+         }
+         for (int feature = 0   feature < numNeurons1   feature++) {
+             ArrayList<Double> featureToLayer = new ArrayList<Double>()
+             for (int n1 = 0   n1 < numNeurons2  n1++) {
+                 featureToLayer.add(Math.random())   //* Math.sqrt(2/(numNeurons1 + numNeurons2)))   //todo weight init
+             }
+             weights2.add(featureToLayer)
+         }
+         for (int feature = 0   feature < numNeurons2   feature++) {
+             weights3.add(Math.random())
+             //weights3.add(Math.random() * Math.sqrt(2/(numNeurons2 + 1)))   //todo weight init
+         }
+     }
+     public static ArrayList<ArrayList<Double>> transpose(ArrayList<ArrayList<Double>> x)  {
+         ArrayList<ArrayList<Double>> transposedArray = new ArrayList<ArrayList<Double>>()
+         //transpose start
+         for (int i = 0    i < x.get(0).size()   i++) {
+             ArrayList<Double>usable = new ArrayList<Double>()
+             transposedArray.add(usable)
+         }
+         for (int point = 0   point < x.size()   point++) {
+             for (int coordinate = 0   coordinate < x.get(point).size()   coordinate++) {
+                 //wriing dot product functinos and transpose functions in java is fun
+                 transposedArray.get(coordinate).add(x.get(point).get(coordinate))
+             }
+         }
+         return (transposedArray)
+     }
+     public static ArrayList<ArrayList<Double>> reLU(ArrayList<ArrayList<Double>> x) {
+         ArrayList<ArrayList<Double>> newX = new ArrayList<ArrayList<Double>>()
+         for (int i =0   i < x.size()   i++) {
+             ArrayList<Double> current = new ArrayList<Double>()
+             for (int j = 0   j < x.get(i).size()   j++) {
+                 double val = x.get(i).get(j)
+                 if (x.get(i).get(j) < 0) {val = 0  }
+                 current.add(val)
+             }
+             newX.add(current)
+         }
+         return newX
+     }
+     public static double categoricalCrossentropy(ArrayList<Double>outputs, ArrayList<Double> labels) {
+         double sum =0
+         for (int i =0   i < outputs.size()   i++) {
+             sum += labels.get(i) * Math.log(outputs.get(i))
+         }
+         return sum * -1
+     }
+     public static ArrayList<Double> derivativeLosses(ArrayList<Double> outputs, ArrayList<Double> labels) {
+         ArrayList<Double> losses = new ArrayList<Double>()
+         for (int i = 0   i < outputs.size()   i++) {
+             losses.add(-1 * labels.get(i)/outputs.get(i))
+         }
+         return losses
+     }
+     public static double softmax(double output, ArrayList<Double> outputs) {
+         double den = 0
+         for (int i = 0   i < outputs.size()   i++) {
+            den += Math.exp(outputs.get(i))
+         }
+         return Math.exp(output)/den
+     }
+     public static double softmaxDerivative(double y, boolean same) {
+         double deriv = 0
+         if (same) {deriv = y * (1-y)  }
+         else {deriv = -1 * (y * y)  }
+         return deriv
+     }
+     public static double dotSum(ArrayList<Double> x, ArrayList<Double> y) {
+         double sum =0
+         for (int i = 0   i < x.size()   i++) {sum += x.get(i) * y.get(i)  }
+         return sum
+     }
+     public static HashMap<String, Object> forwardPropagation(ArrayList<ArrayList<Double>> inputs, ArrayList<ArrayList<Double>> weights1, ArrayList<ArrayList<Double>> weights2, ArrayList<Double> weights3) {
+         ArrayList<ArrayList<Double>> activation1 = new ArrayList<ArrayList<Double>>()
+         ArrayList<ArrayList<Double>> activation2 = new ArrayList<ArrayList<Double>>()
+         ArrayList<Double> activation3 = new ArrayList<Double>()
+         //activation1
+         for (int input = 0   input < inputs.size()   input++) {
+             ArrayList<Double> currentActivation = new ArrayList<Double>()
+             for (int neuron = 0   neuron < transpose(weights1).size()   neuron++) {
+                 double sum = 0
+                 for (int feature = 0   feature < 784   feature++) {
+                     sum += transpose(weights1).get(neuron).get(feature) * x_train.get(input).get(feature)
+                 }
+                 currentActivation.add(sum)
+             }
+             System.out.println("ACtivAIon1")
+             activation1.add(currentActivation)
+         }
+         activation1 = reLU(activation1)
+         //activation2
+         for (int input = 0   input < inputs.size()   input++) {
+             ArrayList<Double> currentActivation = new ArrayList<Double>()
+             for (int neuron = 0   neuron < transpose(weights2).size()   neuron++) {
+                 double sum = 0
+                 for (int feature = 0   feature < numNeurons1   feature++) {
+                     sum += transpose(weights2).get(neuron).get(feature) * activation1.get(input).get(feature)
+                 }
+                 currentActivation.add(sum)
+             }
+             activation2.add(currentActivation)
+             System.out.println("Activation2")
+         }
+         activation2 = reLU(activation2)
+         //activation3 aka da predictions - need to go through softmax
+         for (int input = 0   input < inputs.size()   input++) {
+             double currentOutput = 0
+             for (int activation = 0   activation < activation2.get(input).size()   activation++) {
+                 currentOutput += activation2.get(input).get(activation) * weights3.get(activation)
+             }
+             activation3.add(currentOutput)
+             System.out.println("Activation3")
+         }
+         //softmax time
+         for (int i = 0   i < activation3.size()   i++) {
+             activation3.set(i, softmax(activation3.get(i), activation3))
+         }
+         HashMap<String, Object> results = new HashMap<String, Object>()
+         results.put("outputs", (Object) activation3)
+         results.put("activation2", (Object) activation2)
+         results.put("activation1", (Object) activation1)
+         return results
+     }
+     public static HashMap<String, Object> backPropagation(ArrayList<Double> outputs, ArrayList<Double> labels, ArrayList<ArrayList<Double>> activation2, ArrayList<ArrayList<Double>> activation1) {
+         ArrayList<Double> derivLosses = derivativeLosses(outputs, labels)   //derivative of losses, dL/dYh, next find dY/dZ - softmax deriv
+         ArrayList<ArrayList<Double>> softmaxDerivatives = new ArrayList<ArrayList<Double>>()
+         for (int i = 0   i < outputs.size()  i++) {
+             ArrayList<Double> current = new ArrayList<Double>()
+             for (int j = 0   j< outputs.size()  j++) {
+                 current.add(softmaxDerivative(outputs.get(i), (i == j)))
+             }
+             softmaxDerivatives.add(current)
+         }
+         ArrayList<Double> dLossdZ3 = new ArrayList<Double>()
+         for (int row = 0   row < transpose(softmaxDerivatives).size()   row++) {
+             double sum = 0
+             for (int i =0   i < derivLosses.size()   i++) {
+                 sum += derivLosses.get(i) * transpose(softmaxDerivatives).get(row).get(i)
+             }
+             dLossdZ3.add(sum)
+         }
+         ArrayList<Double> gradients3 = new ArrayList<Double>()
+         for (int row = 0   row < transpose(activation2).size()   row++) {
+             double sum =0
+             for (int i = 0   i < dLossdZ3.size()   i++) {
+                 sum += dLossdZ3.get(i) * transpose(activation2).get(row).get(i)
+             }
+             gradients3.add(sum)
+         }
+         //gradients2
+         ArrayList<ArrayList<Double>> dLdA2 = new ArrayList<ArrayList<Double>>()
+         for (int d= 0   d < dLossdZ3.size()   d++) {
+             ArrayList<Double> current = new ArrayList<Double>()
+             for (int weight = 0   weight < weights3.size()   weight++) {
+                 current.add(weights3.get(weight) * dLossdZ3.get(d))
+             }
+             dLdA2.add(current)
+         }
+         //relu derivs of A2
+         ArrayList<ArrayList<Double>> reluDerivA2 = new ArrayList<ArrayList<Double>>()
+         for (int row = 0   row < activation2.size()   row++) {
+             ArrayList<Double> newRow = new ArrayList<Double>()
+             for (int col =0   col < activation2.get(0).size()   col++) {
+                 if (activation2.get(row).get(col) > 0) {
+                     newRow.add(1.0)
+                 }
+                 else {newRow.add(0.0)  }
+             }
+             reluDerivA2.add(newRow)
+         }
+         ArrayList<ArrayList<Double>> dLdZ2 = new ArrayList<ArrayList<Double>>()
+         for (int row = 0   row < reluDerivA2.size()   row++) {
+             ArrayList<Double> newRow = new ArrayList<Double>()
+             for (int col = 0   col < reluDerivA2.get(row).size()   col++) {
+              newRow.add(reluDerivA2.get(row).get(col) * dLdA2.get(row).get(col))
+             }
+             dLdZ2.add(newRow)
+         }
+         //last step!
+         ArrayList<ArrayList<Double>> gradients2 = new ArrayList<ArrayList<Double>>()
+         for (int feature = 0   feature < transpose(activation1).size()   feature++) {
+             ArrayList<Double> currentGrad = new ArrayList<Double>()   //todo think about what this is
+             for (int column = 0   column < dLdZ2.get(0).size()   column++) {
+                 double sum = 0
+                 for (int i = 0   i < dLdZ2.size()   i++) {
+                     sum += transpose(activation1).get(feature).get(i) * dLdZ2.get(i).get(column)
+                 }
+                 currentGrad.add(sum)
+             }
+             gradients2.add(currentGrad)
+         }
+         //get gradients1
+         /**
+          * weights2 is dZ2/dA1
+          * ∂L/∂A1 = all_other_stuff(aka dLdZ2) * dZ2/dA1( aka weights) in
+          *  */
+         ArrayList<ArrayList<Double>> dLdA1 = new ArrayList<ArrayList<Double>>()
+         for (int row = 0   row < weights2.size()   row++) {
+             ArrayList<Double> currentDeriv = new ArrayList<Double>()
+             for (int allRow = 0   allRow < dLdZ2.size()   allRow++) {
+                 currentDeriv.add(dotSum(dLdZ2.get(allRow), weights2.get(row)))
+             }
+             dLdA1.add(currentDeriv)
+         }
+         //now we have to multiply this 128 * len(d) matrix by len(d) * 128 matrix (relu derivA1)
+         ArrayList<ArrayList<Double>> reluDerivA1 = new ArrayList<ArrayList<Double>>()   //activation1 is a len(d) * 128 matrix
+         for (int row = 0   row < activation1.size()   row++) {
+             ArrayList<Double> newRow = new ArrayList<Double>()   for (int col =0   col < activation1.get(0).size()   col++) {
+                 if (activation1.get(row).get(col) > 0) {
+                     newRow.add(1.0)
+                 }
+                 else {newRow.add(0.0)  }
+             }
+             reluDerivA1.add(newRow)
+         }
+         ArrayList<ArrayList<Double>> dLdZ1 = new ArrayList<ArrayList<Double>>()
+         for (int row = 0   row < reluDerivA1.size()   row++) {
+             ArrayList<Double> currentDeriv = new ArrayList<Double>()
+             for (int col = 0   col < reluDerivA1.get(row).size()   col++) {
+                 currentDeriv.add(reluDerivA1.get(row).get(col) * transpose(dLdA1).get(row).get(col))
+             }
+             dLdZ1.add(currentDeriv)
+         }
+         //final step!!!
+         ArrayList<ArrayList<Double>> gradients1 = new ArrayList<ArrayList<Double>>()
+         for (int feature = 0   feature < transpose(x_train).size()   feature++) {
+             ArrayList<Double> currentGrad = new ArrayList<Double>()
+             for (int col = 0   col < dLdZ1.get(0).size()   col++) {
+                 double sum = 0
+                 for (int i = 0   i < dLdZ1.size()   i++) {
+                     sum += transpose(x_train).get(feature).get(i) * dLdZ1.get(i).get(col)
+                 }
+                 currentGrad.add(sum)
+             }
+             gradients1.add(currentGrad)
+         }
+         /*
+         * ArrayList<ArrayList<Double>> gradients2 = new ArrayList<ArrayList<Double>>()
+         for (int feature = 0   feature < transpose(activation1).size()   feature++) {
+             ArrayList<Double> currentGrad = new ArrayList<Double>()   //todo think about what this is
+             for (int column = 0   column < dLdZ2.get(0).size()   column++) {
+                 double sum = 0
+                 for (int i = 0   i < dLdZ2.size()   i++) {
+                     sum += transpose(activation1).get(feature).get(i) * dLdZ2.get(i).get(column)
+                 }
+                 currentGrad.add(sum)
+             }
+             gradients2.add(currentGrad)
+         }*/
+         HashMap<String, Object> grads = new HashMap<String, Object>()
+         grads.put("gradient3", (Object) gradients3)
+         grads.put("gradient2", (Object) gradients2)
+         grads.put("gradient1", (Object) gradients1)
+         return grads
+     }
+     public static void main(String[]args) throws Exception{
+         getTrainData()
+         System.out.println("done getting data!")
+         /*for (int d = 0   d < x_train.size()   d++) {
+             System.out.println("X_train : " + x_train.get(d) + " label : " + y_train.get(d))
+             System.out.println(x_train.get(d).size())
+             //Thread.sleep(300)
+         }
+         System.out.println(x_train.size() + " " +  y_train.size())  */ //to check data correctly
+         weightInit()
+         System.out.println("weight init done!")
+         /*System.out.println("weights1.size() : " + weights1.size() + " weights1.get(0).size() : " + weights1.get(0).size())
+         System.out.println("weights2.size() : " + weights2.size() + "weights2.get(0).size() : " + weights2.get(0).size())
+         System.out.println("weights3.size() : " + weights3.size())  */ //to check weights correctly
+         System.out.println(weights1)
+         System.out.println(weights2)
+         System.out.println(weights3)
+         for (int epoch = 0   epoch < numEpochs   epoch++) {
+             HashMap<String, Object> allForward = forwardPropagation(x_train, weights1, weights2, weights3)
+             ArrayList<Double> outputs = (ArrayList<Double>) allForward.get("outputs")
+             ArrayList<ArrayList<Double>> a1 = (ArrayList<ArrayList<Double>>) allForward.get("activation1")
+             ArrayList<ArrayList<Double>> a2 = (ArrayList<ArrayList<Double>>) allForward.get("activation2")
+             System.out.println("new cost : " + categoricalCrossentropy(outputs, y_train))
+             HashMap<String, Object> grads = backPropagation(outputs, y_train, a2, a1)
+             ArrayList<Double> grad3 = (ArrayList<Double>) grads.get("gradient3")
+             ArrayList<ArrayList<Double>> grad2 = (ArrayList<ArrayList<Double>>) grads.get("gradient2")
+             ArrayList<ArrayList<Double>> grad1 = (ArrayList<ArrayList<Double>>) grads.get("gradient1")
+             System.out.println("grad3 : " + grad3)
+             System.out.println("grad2 : " + grad2)
+             for (int z =0   z < weights3.size()   z++) {
+                 weights3.set(z, weights3.get(z) - learningRate * grad3.get(z))
+             }
+             for (int row = 0   row < weights2.size()   row++) {
+                 for (int col = 0   col < weights2.get(row).size()   col++) {
+                     weights2.get(row).set(col, weights2.get(row).get(col) - learningRate * grad2.get(row).get(col))
+                 }
+             }
+             for (int row = 0   row < weights1.size()   row++) {
+                 for (int col = 0   col < weights1.get(row).size()   col++) {
+                     weights1.get(row).set(col, weights1.get(row).get(col) - learningRate * grad1.get(row).get(col))
+                 }
+             }
+             System.out.println("weights1 : " + weights1)
+             System.out.println("weights2 : " + weights2)
+             System.out.println("weights3 : " + weights3)
+         }
+     }
+ }
