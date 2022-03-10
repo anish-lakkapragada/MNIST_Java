@@ -19,7 +19,7 @@ public class FinalMNIST {
     public static double biasBeta2 = beta2;
     public static boolean adam = false;
 
-    public static double alpha = 1; //ELU function alpha
+    public static double alpha = 1; // ELU function alpha
     public static ArrayList<ArrayList<Double>> x_train = new ArrayList<ArrayList<Double>>();
     public static ArrayList<ArrayList<Double>> y_train = new ArrayList<ArrayList<Double>>();
     public static ArrayList<ArrayList<Double>> x_test = new ArrayList<ArrayList<Double>>();
@@ -36,7 +36,7 @@ public class FinalMNIST {
     public static double biasMomentum = 0;
     public static double gradClip = 100000;
     public static boolean shouldGradClip = true;
-    public static int numEpochs = 200; //todo next run if needed
+    public static int numEpochs = 200; // todo next run if needed
     public static double e = 0.000000001;
     public static boolean useNesterov = false;
     public static ArrayList<ArrayList<Double>> weights1 = new ArrayList<ArrayList<Double>>();
@@ -65,6 +65,7 @@ public class FinalMNIST {
     public static ArrayList<Double> biases3 = new ArrayList<Double>();
     public static ArrayList<ArrayList<Double>> pastCorrects = new ArrayList<ArrayList<Double>>();
     public static ArrayList<ArrayList<Double>> pastLosses = new ArrayList<ArrayList<Double>>();
+
     public static void getTrainData() throws Exception {
         String train_path = "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/mnist_train.csv";
         String line = "";
@@ -74,14 +75,17 @@ public class FinalMNIST {
             String[] values = line.split(",");
             ArrayList<Double> currentX_train = new ArrayList<Double>();
             for (int i = 0; i < values.length; i++) {
-                if (i == 0) {y_train.add(oneHot(Double.parseDouble(values[0])));}
-                else {
-                    currentX_train.add((Double.parseDouble(values[i]))/255.0);
+                if (i == 0) {
+                    y_train.add(oneHot(Double.parseDouble(values[0])));
+                } else {
+                    currentX_train.add((Double.parseDouble(values[i])) / 255.0);
                 }
             }
             x_train.add(currentX_train);
             z -= 1;
-            if (z == 0) {break;}
+            if (z == 0) {
+                break;
+            }
         }
     }
 
@@ -94,14 +98,17 @@ public class FinalMNIST {
             String[] values = line.split(",");
             ArrayList<Double> currentX_train = new ArrayList<Double>();
             for (int i = 0; i < values.length; i++) {
-                if (i == 0) {y_test.add(oneHot(Double.parseDouble(values[0])));}
-                else {
-                    currentX_train.add((Double.parseDouble(values[i]))/255.0);
+                if (i == 0) {
+                    y_test.add(oneHot(Double.parseDouble(values[0])));
+                } else {
+                    currentX_train.add((Double.parseDouble(values[i])) / 255.0);
                 }
             }
             x_test.add(currentX_train);
             z -= 1;
-            if (z == 0) {break;}
+            if (z == 0) {
+                break;
+            }
         }
     }
 
@@ -110,9 +117,15 @@ public class FinalMNIST {
         ArrayList<Double> sample2 = new ArrayList<Double>();
         ArrayList<Double> sample3 = new ArrayList<Double>();
 
-        for (int n1 = 0; n1 < numNeurons1; n1++) {sample1.add(0.0);}
-        for (int n2 = 0; n2 < numNeurons2; n2++) {sample2.add(0.0);}
-        for (int n3 = 0; n3 <  numNeurons3; n3++) {sample3.add(0.0);}
+        for (int n1 = 0; n1 < numNeurons1; n1++) {
+            sample1.add(0.0);
+        }
+        for (int n2 = 0; n2 < numNeurons2; n2++) {
+            sample2.add(0.0);
+        }
+        for (int n3 = 0; n3 < numNeurons3; n3++) {
+            sample3.add(0.0);
+        }
 
         for (int data = 0; data < miniBatchSize; data++) {
             biasVelocity1.add(sample1);
@@ -124,8 +137,11 @@ public class FinalMNIST {
     public static ArrayList<Double> oneHot(double x) {
         ArrayList<Double> oneHotted = new ArrayList<Double>();
         for (int deep = 0; deep < 10; deep++) {
-            if (deep == x) {oneHotted.add(1.0);}
-            else {oneHotted.add(0.0);}
+            if (deep == x) {
+                oneHotted.add(1.0);
+            } else {
+                oneHotted.add(0.0);
+            }
         }
         return oneHotted;
     }
@@ -135,8 +151,10 @@ public class FinalMNIST {
         for (int feature = 0; feature < 784; feature++) {
             ArrayList<Double> currentWeight = new ArrayList<Double>();
             ArrayList<Double> currentVeloc = new ArrayList<Double>();
-            for (int neuron =0; neuron < numNeurons1; neuron++) {
-                if (feature == 0) {biases1.add(rnd.nextDouble());}
+            for (int neuron = 0; neuron < numNeurons1; neuron++) {
+                if (feature == 0) {
+                    biases1.add(rnd.nextDouble());
+                }
                 currentWeight.add(rnd.nextGaussian());
                 currentVeloc.add(0.0);
             }
@@ -149,7 +167,9 @@ public class FinalMNIST {
             ArrayList<Double> currentWeight = new ArrayList<Double>();
             ArrayList<Double> currentVeloc = new ArrayList<Double>();
             for (int neuron = 0; neuron < numNeurons2; neuron++) {
-                if (feature == 0) {biases2.add(rnd.nextDouble());}
+                if (feature == 0) {
+                    biases2.add(rnd.nextDouble());
+                }
                 currentWeight.add(rnd.nextGaussian());
                 currentVeloc.add(0.0);
             }
@@ -162,7 +182,9 @@ public class FinalMNIST {
             ArrayList<Double> currentWeight = new ArrayList<Double>();
             ArrayList<Double> currentVeloc = new ArrayList<Double>();
             for (int neuron = 0; neuron < numNeurons3; neuron++) {
-                if(feature==0) {biases3.add(rnd.nextDouble());}
+                if (feature == 0) {
+                    biases3.add(rnd.nextDouble());
+                }
                 currentWeight.add(rnd.nextGaussian());
                 currentVeloc.add(0.0);
             }
@@ -174,19 +196,21 @@ public class FinalMNIST {
     public static void XavierInit() {
         for (int feature = 0; feature < weights1.size(); feature++) {
             for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
-                weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) * Math.sqrt(2.0/784.0));
+                weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) * Math.sqrt(2.0 / 784.0));
             }
         }
 
         for (int feature = 0; feature < weights2.size(); feature++) {
             for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
-                weights2.get(feature).set(neuron, weights2.get(feature).get(neuron) * Math.sqrt(2.0/weights2.get(0).size()));
+                weights2.get(feature).set(neuron,
+                        weights2.get(feature).get(neuron) * Math.sqrt(2.0 / weights2.get(0).size()));
             }
         }
 
         for (int feature = 0; feature < weights3.size(); feature++) {
-            for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++){
-                weights3.get(feature).set(neuron, weights3.get(feature).get(neuron) * Math.sqrt(2.0/weights3.get(0).size()));
+            for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
+                weights3.get(feature).set(neuron,
+                        weights3.get(feature).get(neuron) * Math.sqrt(2.0 / weights3.get(0).size()));
             }
         }
 
@@ -212,7 +236,7 @@ public class FinalMNIST {
             double mean = meanList(currentFeature);
             double std = standardDeviation(currentFeature, mean);
             for (int feature = 0; feature < currentFeature.size(); feature++) {
-                currentData.add((currentFeature.get(feature) - mean)/std);
+                currentData.add((currentFeature.get(feature) - mean) / std);
             }
             newData.add(currentData);
         }
@@ -222,27 +246,33 @@ public class FinalMNIST {
 
     public static double standardDeviation(ArrayList<Double> data, double mean) {
         double num = 0;
-        for (int i =0; i < data.size(); i++)  {
+        for (int i = 0; i < data.size(); i++) {
             num += Math.pow((data.get(i) - mean), 2);
         }
-        return Math.sqrt(num/data.size());
+        return Math.sqrt(num / data.size());
     }
 
     public static double meanList(ArrayList<Double> x) {
-        double sum =0;
-        for (int i = 0; i < x.size(); i++) {sum += x.get(i);}
+        double sum = 0;
+        for (int i = 0; i < x.size(); i++) {
+            sum += x.get(i);
+        }
         return sum;
     }
 
     public static ArrayList<Double> vectorSquared(ArrayList<Double> x) {
         ArrayList<Double> newX = new ArrayList<Double>();
-        for (int i =0; i < x.size(); i++) {newX.add(x.get(i) * x.get(i));}
+        for (int i = 0; i < x.size(); i++) {
+            newX.add(x.get(i) * x.get(i));
+        }
         return newX;
     }
 
     public static ArrayList<Double> vectorSqrt(ArrayList<Double> x) {
         ArrayList<Double> newX = new ArrayList<Double>();
-        for (int i =0; i < x.size(); i++) {newX.add(Math.sqrt(x.get(i)));}
+        for (int i = 0; i < x.size(); i++) {
+            newX.add(Math.sqrt(x.get(i)));
+        }
         return newX;
     }
 
@@ -252,15 +282,22 @@ public class FinalMNIST {
             ArrayList<Double> currentActivation = new ArrayList<Double>();
             for (int j = 0; j < z.get(i).size(); j++) {
                 double currentNeuron = z.get(i).get(j);
-                if (currentNeuron < 0) {currentActivation.add(alpha * (Math.exp(currentNeuron) - 1));}
-                if (currentNeuron >=0) {currentActivation.add(currentNeuron);}
+                if (currentNeuron < 0) {
+                    currentActivation.add(alpha * (Math.exp(currentNeuron) - 1));
+                }
+                if (currentNeuron >= 0) {
+                    currentActivation.add(currentNeuron);
+                }
             }
             activation.add(currentActivation);
         }
         return activation;
     }
 
-    public static HashMap<String, Object> forwardPropagation(ArrayList<ArrayList<Double>> inputs, ArrayList<ArrayList<Double>> weights1, ArrayList<ArrayList<Double>> weights2, ArrayList<ArrayList<Double>> weights3, ArrayList<Double> biases1, ArrayList<Double> biases2, ArrayList<Double> biases3) throws Exception{
+    public static HashMap<String, Object> forwardPropagation(ArrayList<ArrayList<Double>> inputs,
+            ArrayList<ArrayList<Double>> weights1, ArrayList<ArrayList<Double>> weights2,
+            ArrayList<ArrayList<Double>> weights3, ArrayList<Double> biases1, ArrayList<Double> biases2,
+            ArrayList<Double> biases3) throws Exception {
 
         ArrayList<ArrayList<Double>> activation1 = new ArrayList<ArrayList<Double>>();
         for (int i = 0; i < inputs.size(); i++) {
@@ -286,7 +323,7 @@ public class FinalMNIST {
 
         activation2 = ELU(biasAdd(activation2, biases2));
         ArrayList<ArrayList<Double>> activation3 = new ArrayList<ArrayList<Double>>();
-        for (int activation = 0 ; activation < activation2.size(); activation++) {
+        for (int activation = 0; activation < activation2.size(); activation++) {
             ArrayList<Double> currentActivation = new ArrayList<Double>();
             for (int column = 0; column < weights3.get(0).size(); column++) {
                 currentActivation.add(dotSum(activation2.get(activation), getCol(weights3, column)));
@@ -305,8 +342,12 @@ public class FinalMNIST {
         return allForward;
     }
 
-    public static HashMap<String, Object> backpropagation(ArrayList<ArrayList<Double>> y_train, ArrayList<ArrayList<Double>> outputs, ArrayList<ArrayList<Double>> rawA3, ArrayList<ArrayList<Double>> activation2, ArrayList<ArrayList<Double>> activation1) {
-        if (useNesterov) {nesterov();}
+    public static HashMap<String, Object> backpropagation(ArrayList<ArrayList<Double>> y_train,
+            ArrayList<ArrayList<Double>> outputs, ArrayList<ArrayList<Double>> rawA3,
+            ArrayList<ArrayList<Double>> activation2, ArrayList<ArrayList<Double>> activation1) {
+        if (useNesterov) {
+            nesterov();
+        }
         ArrayList<ArrayList<Double>> dLdYh = new ArrayList<ArrayList<Double>>();
         for (int output = 0; output < outputs.size(); output++) {
             ArrayList<Double> upward = elementWiseDiv(y_train.get(output), scalarAdd(outputs.get(output), e));
@@ -316,7 +357,7 @@ public class FinalMNIST {
         System.out.println("DLDYH shape : " + shape(dLdYh));
 
         ArrayList<ArrayList<ArrayList<Double>>> dYhdZ3 = new ArrayList<ArrayList<ArrayList<Double>>>();
-        for (int raw = 0; raw < rawA3.size();raw++) {
+        for (int raw = 0; raw < rawA3.size(); raw++) {
             dYhdZ3.add(softmaxDeriv(rawA3.get(raw)));
         }
 
@@ -324,7 +365,7 @@ public class FinalMNIST {
 
         ArrayList<ArrayList<Double>> dLdZ3 = new ArrayList<ArrayList<Double>>();
         for (int output = 0; output < outputs.size(); output++) {
-            //dLdZ3.add(dot(dYhdZ3.get(error), dLdYh.get(error)));
+            // dLdZ3.add(dot(dYhdZ3.get(error), dLdYh.get(error)));
             dLdZ3.add(vectorSubtract(outputs.get(output), y_train.get(output)));
         }
 
@@ -338,9 +379,11 @@ public class FinalMNIST {
         System.out.println("grad3 shape : " + shape(gradients3));
 
         ArrayList<ArrayList<Double>> dLdA2 = new ArrayList<ArrayList<Double>>();
-        /*for (int neuron = 0 ; neuron < weights3.size(); neuron++) {
-            dLdA2.add(dot(weights3, dLdZ3.get(neuron)));
-        }*/
+        /*
+         * for (int neuron = 0 ; neuron < weights3.size(); neuron++) {
+         * dLdA2.add(dot(weights3, dLdZ3.get(neuron)));
+         * }
+         */
 
         for (int deriv = 0; deriv < dLdZ3.size(); deriv++) {
             dLdA2.add(dot(weights3, dLdZ3.get(deriv)));
@@ -353,8 +396,11 @@ public class FinalMNIST {
             ArrayList<Double> currentDeriv = new ArrayList<Double>();
             for (int neuron = 0; neuron < activation2.get(neurons).size(); neuron++) {
                 double rawNeuron = reverseELU(activation2.get(neurons).get(neuron));
-                if (rawNeuron > 0) {currentDeriv.add(1.0);}
-                else {currentDeriv.add(alpha * Math.exp(rawNeuron));}
+                if (rawNeuron > 0) {
+                    currentDeriv.add(1.0);
+                } else {
+                    currentDeriv.add(alpha * Math.exp(rawNeuron));
+                }
             }
             eLUDerivZ2.add(currentDeriv);
         }
@@ -380,13 +426,15 @@ public class FinalMNIST {
         System.out.println("grad2 shape : " + shape(gradients2));
 
         ArrayList<ArrayList<Double>> dLdA1 = new ArrayList<ArrayList<Double>>();
-        /*for (int deriv = 0; neuron < weights2.size(); neuron++) {
-            dLdA1.add(dot(dLdZ2, weights2.get(neuron)));
-        }*/
+        /*
+         * for (int deriv = 0; neuron < weights2.size(); neuron++) {
+         * dLdA1.add(dot(dLdZ2, weights2.get(neuron)));
+         * }
+         */
 
         for (int deriv = 0; deriv < dLdZ2.size(); deriv++) {
             dLdA1.add(dot(weights2, dLdZ2.get(deriv)));
-            //System.out.println("DOT(W2, deriv) : " + dot(weights2, dLdZ2.get(deriv)));
+            // System.out.println("DOT(W2, deriv) : " + dot(weights2, dLdZ2.get(deriv)));
         }
 
         System.out.println("dLdA1 shape : " + shape(dLdA1));
@@ -396,8 +444,11 @@ public class FinalMNIST {
             ArrayList<Double> currentDeriv = new ArrayList<Double>();
             for (int neuron = 0; neuron < activation1.get(neurons).size(); neuron++) {
                 double rawNeuron = reverseELU(activation1.get(neurons).get(neuron));
-                if (rawNeuron > 0) {currentDeriv.add(1.0);}
-                else {currentDeriv.add(alpha * Math.exp(rawNeuron));}
+                if (rawNeuron > 0) {
+                    currentDeriv.add(1.0);
+                } else {
+                    currentDeriv.add(alpha * Math.exp(rawNeuron));
+                }
             }
             eLUDerivZ1.add(currentDeriv);
         }
@@ -415,14 +466,12 @@ public class FinalMNIST {
 
         System.out.println("dLdZ1 Shape : " + shape(dLdZ1));
 
-
         ArrayList<ArrayList<Double>> gradients1 = new ArrayList<ArrayList<Double>>();
         for (int col = 0; col < x_train.get(0).size(); col++) {
             gradients1.add(dot(transpose(dLdZ1), getCol(x_train, col)));
         }
 
         System.out.println(" grad 1 Shape : " + shape(gradients1));
-
 
         if (shouldGradClip) {
             gradients1 = gradClip(gradients1);
@@ -443,7 +492,6 @@ public class FinalMNIST {
         return gradients;
     }
 
-
     public static double getLosses(ArrayList<ArrayList<Double>> yH, ArrayList<ArrayList<Double>> labels) {
         double losses = 0;
         for (int output = 0; output < yH.size(); output++) {
@@ -456,17 +504,17 @@ public class FinalMNIST {
         return vectorSum(vectorSquared(vectorSubtract(predicted, label)));
     }
 
-    public static double vectorSum(ArrayList<Double> x ) {
-        double sum =0;
-        for (int i =0; i < x.size(); i++) {
+    public static double vectorSum(ArrayList<Double> x) {
+        double sum = 0;
+        for (int i = 0; i < x.size(); i++) {
             sum += x.get(i);
         }
         return sum;
     }
 
-
-
-    public static void useMomentum(ArrayList<ArrayList<Double>> gradients1, ArrayList<ArrayList<Double>> gradients2, ArrayList<ArrayList<Double>> gradients3, ArrayList<ArrayList<Double>> bgrad1, ArrayList<ArrayList<Double>> bgrad2, ArrayList<ArrayList<Double>> bgrad3) {
+    public static void useMomentum(ArrayList<ArrayList<Double>> gradients1, ArrayList<ArrayList<Double>> gradients2,
+            ArrayList<ArrayList<Double>> gradients3, ArrayList<ArrayList<Double>> bgrad1,
+            ArrayList<ArrayList<Double>> bgrad2, ArrayList<ArrayList<Double>> bgrad3) {
         ArrayList<ArrayList<Double>> newVelocity1 = new ArrayList<ArrayList<Double>>();
         ArrayList<ArrayList<Double>> newVelocity2 = new ArrayList<ArrayList<Double>>();
         ArrayList<ArrayList<Double>> newVelocity3 = new ArrayList<ArrayList<Double>>();
@@ -474,15 +522,17 @@ public class FinalMNIST {
         for (int feature = 0; feature < velocity1.size(); feature++) {
             ArrayList<Double> currentVeloc = new ArrayList<Double>();
             for (int neuron = 0; neuron < velocity1.get(feature).size(); neuron++) {
-                currentVeloc.add(velocity1.get(feature).get(neuron) * momentum + learningRate * gradients1.get(feature).get(neuron));
+                currentVeloc.add(velocity1.get(feature).get(neuron) * momentum
+                        + learningRate * gradients1.get(feature).get(neuron));
             }
             newVelocity1.add(currentVeloc);
         }
 
-        for (int feature = 0; feature < velocity2.size(); feature++){
+        for (int feature = 0; feature < velocity2.size(); feature++) {
             ArrayList<Double> currentVeloc = new ArrayList<Double>();
             for (int neuron = 0; neuron < velocity2.get(feature).size(); neuron++) {
-                currentVeloc.add(velocity2.get(feature).get(neuron) * momentum + learningRate * gradients2.get(feature).get(neuron));
+                currentVeloc.add(velocity2.get(feature).get(neuron) * momentum
+                        + learningRate * gradients2.get(feature).get(neuron));
             }
             newVelocity2.add(currentVeloc);
         }
@@ -490,7 +540,8 @@ public class FinalMNIST {
         for (int feature = 0; feature < velocity3.size(); feature++) {
             ArrayList<Double> currentVeloc = new ArrayList<Double>();
             for (int neuron = 0; neuron < velocity3.get(feature).size(); neuron++) {
-                currentVeloc.add(velocity3.get(feature).get(neuron) * momentum + learningRate * gradients3.get(feature).get(neuron));
+                currentVeloc.add(velocity3.get(feature).get(neuron) * momentum
+                        + learningRate * gradients3.get(feature).get(neuron));
             }
             newVelocity3.add(currentVeloc);
         }
@@ -505,35 +556,41 @@ public class FinalMNIST {
 
         for (int feature = 0; feature < weights1.size(); feature++) {
             for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
-                weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) - velocity1.get(feature).get(neuron));
+                weights1.get(feature).set(neuron,
+                        weights1.get(feature).get(neuron) - velocity1.get(feature).get(neuron));
             }
         }
 
-        for (int feature =0 ; feature < weights2.size(); feature++) {
+        for (int feature = 0; feature < weights2.size(); feature++) {
             for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
-                weights2.get(feature).set(neuron, weights2.get(feature).get(neuron) - velocity2.get(feature).get(neuron));
+                weights2.get(feature).set(neuron,
+                        weights2.get(feature).get(neuron) - velocity2.get(feature).get(neuron));
             }
         }
 
-        for (int feature =0 ;feature < weights3.size(); feature++) {
+        for (int feature = 0; feature < weights3.size(); feature++) {
             for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
-                weights3.get(feature).set(neuron, weights3.get(feature).get(neuron) - velocity3.get(feature).get(neuron));
+                weights3.get(feature).set(neuron,
+                        weights3.get(feature).get(neuron) - velocity3.get(feature).get(neuron));
             }
         }
 
         ArrayList<ArrayList<Double>> newBiasVelocity1 = new ArrayList<ArrayList<Double>>();
         ArrayList<ArrayList<Double>> newBiasVelocity2 = new ArrayList<ArrayList<Double>>();
         ArrayList<ArrayList<Double>> newBiasVelocity3 = new ArrayList<ArrayList<Double>>();
-        for (int data = 0; data < biasVelocity1.size(); data++){
-            newBiasVelocity1.add(vectorAdd(scalarMultiply(biasVelocity1.get(data), biasMomentum), scalarMultiply(bgrad1.get(data), biasLearningRate)));
+        for (int data = 0; data < biasVelocity1.size(); data++) {
+            newBiasVelocity1.add(vectorAdd(scalarMultiply(biasVelocity1.get(data), biasMomentum),
+                    scalarMultiply(bgrad1.get(data), biasLearningRate)));
         }
 
         for (int data = 0; data < biasVelocity2.size(); data++) {
-            newBiasVelocity2.add(vectorAdd(scalarMultiply(biasVelocity2.get(data), biasMomentum), scalarMultiply(bgrad2.get(data), biasLearningRate)));
+            newBiasVelocity2.add(vectorAdd(scalarMultiply(biasVelocity2.get(data), biasMomentum),
+                    scalarMultiply(bgrad2.get(data), biasLearningRate)));
         }
 
         for (int data = 0; data < biasVelocity2.size(); data++) {
-            newBiasVelocity3.add(vectorAdd(scalarMultiply(biasVelocity3.get(data), biasMomentum), scalarMultiply(bgrad3.get(data), biasLearningRate)));
+            newBiasVelocity3.add(vectorAdd(scalarMultiply(biasVelocity3.get(data), biasMomentum),
+                    scalarMultiply(bgrad3.get(data), biasLearningRate)));
         }
 
         biasVelocity1 = newBiasVelocity1;
@@ -544,7 +601,7 @@ public class FinalMNIST {
             biases1 = vectorSubtract(biases1, biasVelocity1.get(bgrad));
         }
 
-        for (int bgrad = 0; bgrad< bgrad2.size(); bgrad++) {
+        for (int bgrad = 0; bgrad < bgrad2.size(); bgrad++) {
             biases2 = vectorSubtract(biases2, biasVelocity2.get(bgrad));
         }
 
@@ -555,7 +612,7 @@ public class FinalMNIST {
     }
 
     public static void adamInit() {
-        for (int feature = 0 ; feature < 784; feature++) {
+        for (int feature = 0; feature < 784; feature++) {
             ArrayList<Double> currentM = new ArrayList<Double>();
             for (int neuron = 0; neuron < numNeurons1; neuron++) {
                 currentM.add(0.0);
@@ -564,7 +621,7 @@ public class FinalMNIST {
             adamV1.add(currentM);
         }
 
-        for (int feature = 0 ; feature < numNeurons1; feature++) {
+        for (int feature = 0; feature < numNeurons1; feature++) {
             ArrayList<Double> currentM = new ArrayList<Double>();
             for (int neuron = 0; neuron < numNeurons2; neuron++) {
                 currentM.add(0.0);
@@ -573,7 +630,7 @@ public class FinalMNIST {
             adamV2.add(currentM);
         }
 
-        for (int feature = 0 ; feature < numNeurons2; feature++) {
+        for (int feature = 0; feature < numNeurons2; feature++) {
             ArrayList<Double> currentM = new ArrayList<Double>();
             for (int neuron = 0; neuron < numNeurons3; neuron++) {
                 currentM.add(0.0);
@@ -586,9 +643,15 @@ public class FinalMNIST {
         ArrayList<Double> sample2 = new ArrayList<Double>();
         ArrayList<Double> sample3 = new ArrayList<Double>();
 
-        for (int n1 = 0; n1 < numNeurons1; n1++) {sample1.add(0.0);}
-        for (int n2 = 0; n2 < numNeurons2; n2++) {sample2.add(0.0);}
-        for (int n3 = 0; n3 <  numNeurons3; n3++) {sample3.add(0.0);}
+        for (int n1 = 0; n1 < numNeurons1; n1++) {
+            sample1.add(0.0);
+        }
+        for (int n2 = 0; n2 < numNeurons2; n2++) {
+            sample2.add(0.0);
+        }
+        for (int n3 = 0; n3 < numNeurons3; n3++) {
+            sample3.add(0.0);
+        }
 
         for (int data = 0; data < miniBatchSize; data++) {
             adamBM1.add(sample1);
@@ -599,19 +662,21 @@ public class FinalMNIST {
             adamBV3.add(sample3);
         }
 
-
     }
-
-
 
     public static ArrayList<ArrayList<Double>> matrixScalarDivide(ArrayList<ArrayList<Double>> matrix, double scalar) {
         ArrayList<ArrayList<Double>> newMatrix = new ArrayList<ArrayList<Double>>();
-        for (int i = 0 ; i < matrix.size(); i++) {newMatrix.add(scalarDivide(matrix.get(i), scalar));}
+        for (int i = 0; i < matrix.size(); i++) {
+            newMatrix.add(scalarDivide(matrix.get(i), scalar));
+        }
         return newMatrix;
     }
 
-    public static void adam(ArrayList<ArrayList<Double>> gradients1, ArrayList<ArrayList<Double>> gradients2, ArrayList<ArrayList<Double>> gradients3, ArrayList<ArrayList<Double>> bgrads1, ArrayList<ArrayList<Double>> bgrads2, ArrayList<ArrayList<Double>> bgrads3, double epoch, double numOutputs) {
-        //scale grads
+    public static void adam(ArrayList<ArrayList<Double>> gradients1, ArrayList<ArrayList<Double>> gradients2,
+            ArrayList<ArrayList<Double>> gradients3, ArrayList<ArrayList<Double>> bgrads1,
+            ArrayList<ArrayList<Double>> bgrads2, ArrayList<ArrayList<Double>> bgrads3, double epoch,
+            double numOutputs) {
+        // scale grads
         gradients1 = matrixScalarDivide(gradients1, numOutputs);
         gradients2 = matrixScalarDivide(gradients2, numOutputs);
         gradients3 = matrixScalarDivide(gradients3, numOutputs);
@@ -619,48 +684,54 @@ public class FinalMNIST {
         bgrads2 = matrixScalarDivide(bgrads2, numOutputs);
         bgrads3 = matrixScalarDivide(bgrads3, numOutputs);
 
-        //update weights
+        // update weights
 
-        //1. update adamM
-        for (int feature =0; feature < adamM1.size(); feature++) {
-            for (int neuron = 0 ;neuron < adamM1.get(feature).size(); neuron++) {
-                adamM1.get(feature).set(neuron, beta1 * adamM1.get(feature).get(neuron) + (1- beta1) * gradients1.get(feature).get(neuron));
+        // 1. update adamM
+        for (int feature = 0; feature < adamM1.size(); feature++) {
+            for (int neuron = 0; neuron < adamM1.get(feature).size(); neuron++) {
+                adamM1.get(feature).set(neuron,
+                        beta1 * adamM1.get(feature).get(neuron) + (1 - beta1) * gradients1.get(feature).get(neuron));
             }
         }
 
-        for (int feature =0; feature < adamM2.size(); feature++) {
-            for (int neuron = 0 ;neuron < adamM2.get(feature).size(); neuron++) {
-                adamM2.get(feature).set(neuron, beta1 * adamM2.get(feature).get(neuron) + (1- beta1) * gradients2.get(feature).get(neuron));
+        for (int feature = 0; feature < adamM2.size(); feature++) {
+            for (int neuron = 0; neuron < adamM2.get(feature).size(); neuron++) {
+                adamM2.get(feature).set(neuron,
+                        beta1 * adamM2.get(feature).get(neuron) + (1 - beta1) * gradients2.get(feature).get(neuron));
             }
         }
 
-        for (int feature =0; feature < adamM3.size(); feature++) {
-            for (int neuron = 0 ;neuron < adamM3.get(feature).size(); neuron++) {
-                adamM3.get(feature).set(neuron, beta1 * adamM3.get(feature).get(neuron) + (1- beta1) * gradients3.get(feature).get(neuron));
+        for (int feature = 0; feature < adamM3.size(); feature++) {
+            for (int neuron = 0; neuron < adamM3.get(feature).size(); neuron++) {
+                adamM3.get(feature).set(neuron,
+                        beta1 * adamM3.get(feature).get(neuron) + (1 - beta1) * gradients3.get(feature).get(neuron));
             }
         }
 
-        //2. update adamV
+        // 2. update adamV
 
-        for (int feature =0; feature < adamV1.size(); feature++) {
-            for (int neuron = 0 ;neuron < adamV1.get(feature).size(); neuron++) {
-                adamV1.get(feature).set(neuron, beta2 * adamV1.get(feature).get(neuron) + (1 - beta2) * Math.pow(gradients1.get(feature).get(neuron), 2));
+        for (int feature = 0; feature < adamV1.size(); feature++) {
+            for (int neuron = 0; neuron < adamV1.get(feature).size(); neuron++) {
+                adamV1.get(feature).set(neuron, beta2 * adamV1.get(feature).get(neuron)
+                        + (1 - beta2) * Math.pow(gradients1.get(feature).get(neuron), 2));
             }
         }
 
-        for (int feature =0; feature < adamV2.size(); feature++) {
-            for (int neuron = 0 ;neuron < adamV2.get(feature).size(); neuron++) {
-                adamV2.get(feature).set(neuron, beta2 * adamV2.get(feature).get(neuron) + (1 - beta2) * Math.pow(gradients2.get(feature).get(neuron), 2));
+        for (int feature = 0; feature < adamV2.size(); feature++) {
+            for (int neuron = 0; neuron < adamV2.get(feature).size(); neuron++) {
+                adamV2.get(feature).set(neuron, beta2 * adamV2.get(feature).get(neuron)
+                        + (1 - beta2) * Math.pow(gradients2.get(feature).get(neuron), 2));
             }
         }
 
-        for (int feature =0; feature < adamV3.size(); feature++) {
-            for (int neuron = 0 ;neuron < adamV3.get(feature).size(); neuron++) {
-                adamV3.get(feature).set(neuron, beta2 * adamV3.get(feature).get(neuron) + (1 - beta2) * Math.pow(gradients3.get(feature).get(neuron), 2));
+        for (int feature = 0; feature < adamV3.size(); feature++) {
+            for (int neuron = 0; neuron < adamV3.get(feature).size(); neuron++) {
+                adamV3.get(feature).set(neuron, beta2 * adamV3.get(feature).get(neuron)
+                        + (1 - beta2) * Math.pow(gradients3.get(feature).get(neuron), 2));
             }
         }
 
-        //3. scale adamM
+        // 3. scale adamM
 
         for (int feature = 0; feature < adamM1.size(); feature++) {
             adamM1.set(feature, scalarDivide(adamM1.get(feature), (1 - Math.pow(beta1, (epoch + 1)))));
@@ -674,7 +745,7 @@ public class FinalMNIST {
             adamM3.set(feature, scalarDivide(adamM3.get(feature), (1 - Math.pow(beta1, (epoch + 1)))));
         }
 
-        //4. scale adamV
+        // 4. scale adamV
 
         for (int feature = 0; feature < adamV1.size(); feature++) {
             adamV1.set(feature, scalarDivide(adamV1.get(feature), (1 - Math.pow(beta2, (epoch + 1)))));
@@ -688,14 +759,14 @@ public class FinalMNIST {
             adamV3.set(feature, scalarDivide(adamV3.get(feature), (1 - Math.pow(beta2, (epoch + 1)))));
         }
 
-        //5. update the weights!
+        // 5. update the weights!
 
         ArrayList<ArrayList<Double>> scaledMomentum1 = new ArrayList<ArrayList<Double>>();
         ArrayList<ArrayList<Double>> scaledMomentum2 = new ArrayList<ArrayList<Double>>();
         ArrayList<ArrayList<Double>> scaledMomentum3 = new ArrayList<ArrayList<Double>>();
         for (int feature = 0; feature < weights1.size(); feature++) {
             ArrayList<Double> currSM = new ArrayList<Double>();
-            for (int neuron =0 ; neuron < weights1.get(feature).size(); neuron++) {
+            for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
                 currSM.add(adamM1.get(feature).get(neuron) / Math.sqrt(adamV1.get(feature).get(neuron) + e));
             }
             scaledMomentum1.add(currSM);
@@ -703,7 +774,7 @@ public class FinalMNIST {
 
         for (int feature = 0; feature < weights2.size(); feature++) {
             ArrayList<Double> currSM = new ArrayList<Double>();
-            for (int neuron =0 ; neuron < weights2.get(feature).size(); neuron++) {
+            for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
                 currSM.add(adamM2.get(feature).get(neuron) / Math.sqrt(adamV2.get(feature).get(neuron) + e));
             }
             scaledMomentum2.add(currSM);
@@ -711,7 +782,7 @@ public class FinalMNIST {
 
         for (int feature = 0; feature < weights3.size(); feature++) {
             ArrayList<Double> currSM = new ArrayList<Double>();
-            for (int neuron =0 ; neuron < weights3.get(feature).size(); neuron++) {
+            for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
                 currSM.add(adamM3.get(feature).get(neuron) / Math.sqrt(adamV3.get(feature).get(neuron) + e));
             }
             scaledMomentum3.add(currSM);
@@ -719,59 +790,67 @@ public class FinalMNIST {
 
         for (int feature = 0; feature < weights1.size(); feature++) {
             for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
-                weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) - learningRate * scaledMomentum1.get(feature).get(neuron));
+                weights1.get(feature).set(neuron,
+                        weights1.get(feature).get(neuron) - learningRate * scaledMomentum1.get(feature).get(neuron));
             }
         }
 
-        for (int feature =0 ; feature < weights2.size(); feature++) {
-            for (int neuron =0; neuron < weights2.get(feature).size(); neuron++) {
-                weights2.get(feature).set(neuron, weights2.get(feature).get(neuron) - learningRate * scaledMomentum2.get(feature).get(neuron));
+        for (int feature = 0; feature < weights2.size(); feature++) {
+            for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
+                weights2.get(feature).set(neuron,
+                        weights2.get(feature).get(neuron) - learningRate * scaledMomentum2.get(feature).get(neuron));
             }
         }
 
-        for (int feature =0; feature < weights3.size(); feature++) {
-            for (int neuron = 0 ; neuron < weights3.get(feature).size(); neuron++) {
-                weights3.get(feature).set(neuron, weights3.get(feature).get(neuron) - learningRate * scaledMomentum3.get(feature).get(neuron));
+        for (int feature = 0; feature < weights3.size(); feature++) {
+            for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
+                weights3.get(feature).set(neuron,
+                        weights3.get(feature).get(neuron) - learningRate * scaledMomentum3.get(feature).get(neuron));
             }
         }
 
-        //for the biases!
+        // for the biases!
 
-        //1 & 3. update  + scale adamBM
-        for (int neurons = 0; neurons< adamBM1.size(); neurons++) {
-            adamBM1.set(neurons, vectorAdd(scalarMultiply(adamBM1.get(neurons), biasBeta1), scalarMultiply(bgrads1.get(neurons), (1-biasBeta1))));
-            adamBM1.set(neurons, scalarDivide(adamBM1.get(neurons), (1-Math.pow(biasBeta1, (epoch + 1)))));
+        // 1 & 3. update + scale adamBM
+        for (int neurons = 0; neurons < adamBM1.size(); neurons++) {
+            adamBM1.set(neurons, vectorAdd(scalarMultiply(adamBM1.get(neurons), biasBeta1),
+                    scalarMultiply(bgrads1.get(neurons), (1 - biasBeta1))));
+            adamBM1.set(neurons, scalarDivide(adamBM1.get(neurons), (1 - Math.pow(biasBeta1, (epoch + 1)))));
         }
 
-
-        for (int neurons = 0; neurons< adamBM2.size(); neurons++) {
-            adamBM2.set(neurons, vectorAdd(scalarMultiply(adamBM2.get(neurons), biasBeta1), scalarMultiply(bgrads2.get(neurons), (1-biasBeta1))));
-            adamBM2.set(neurons, scalarDivide(adamBM2.get(neurons), (1-Math.pow(biasBeta1, (epoch + 1)))));
+        for (int neurons = 0; neurons < adamBM2.size(); neurons++) {
+            adamBM2.set(neurons, vectorAdd(scalarMultiply(adamBM2.get(neurons), biasBeta1),
+                    scalarMultiply(bgrads2.get(neurons), (1 - biasBeta1))));
+            adamBM2.set(neurons, scalarDivide(adamBM2.get(neurons), (1 - Math.pow(biasBeta1, (epoch + 1)))));
         }
 
-        for (int neurons = 0; neurons< adamBM3.size(); neurons++) {
-            adamBM3.set(neurons, vectorAdd(scalarMultiply(adamBM3.get(neurons), biasBeta1), scalarMultiply(bgrads3.get(neurons), (1-biasBeta1))));
-            adamBM3.set(neurons, scalarDivide(adamBM3.get(neurons), (1-Math.pow(biasBeta1, (epoch + 1)))));
+        for (int neurons = 0; neurons < adamBM3.size(); neurons++) {
+            adamBM3.set(neurons, vectorAdd(scalarMultiply(adamBM3.get(neurons), biasBeta1),
+                    scalarMultiply(bgrads3.get(neurons), (1 - biasBeta1))));
+            adamBM3.set(neurons, scalarDivide(adamBM3.get(neurons), (1 - Math.pow(biasBeta1, (epoch + 1)))));
         }
 
-        //2 & 4. update + scale adamBV
+        // 2 & 4. update + scale adamBV
 
         for (int neurons = 0; neurons < adamBV1.size(); neurons++) {
-            adamBV1.set(neurons, vectorAdd(scalarMultiply(adamBV1.get(neurons), biasBeta2), scalarMultiply(vectorSquared(bgrads1.get(neurons)), (1-biasBeta2))));
-            adamBV1.set(neurons, scalarDivide(adamBV1.get(neurons), (1-Math.pow(biasBeta2, (epoch + 1)))));
+            adamBV1.set(neurons, vectorAdd(scalarMultiply(adamBV1.get(neurons), biasBeta2),
+                    scalarMultiply(vectorSquared(bgrads1.get(neurons)), (1 - biasBeta2))));
+            adamBV1.set(neurons, scalarDivide(adamBV1.get(neurons), (1 - Math.pow(biasBeta2, (epoch + 1)))));
         }
 
         for (int neurons = 0; neurons < adamBV2.size(); neurons++) {
-            adamBV2.set(neurons, vectorAdd(scalarMultiply(adamBV2.get(neurons), biasBeta2), scalarMultiply(vectorSquared(bgrads2.get(neurons)), (1-biasBeta2))));
-            adamBV2.set(neurons, scalarDivide(adamBV2.get(neurons), (1-Math.pow(biasBeta2, (epoch + 1)))));
+            adamBV2.set(neurons, vectorAdd(scalarMultiply(adamBV2.get(neurons), biasBeta2),
+                    scalarMultiply(vectorSquared(bgrads2.get(neurons)), (1 - biasBeta2))));
+            adamBV2.set(neurons, scalarDivide(adamBV2.get(neurons), (1 - Math.pow(biasBeta2, (epoch + 1)))));
         }
 
         for (int neurons = 0; neurons < adamBV3.size(); neurons++) {
-            adamBV3.set(neurons, vectorAdd(scalarMultiply(adamBV3.get(neurons), biasBeta2), scalarMultiply(vectorSquared(bgrads3.get(neurons)), (1-biasBeta2))));
-            adamBV3.set(neurons, scalarDivide(adamBV3.get(neurons), (1-Math.pow(biasBeta2, (epoch + 1)))));
+            adamBV3.set(neurons, vectorAdd(scalarMultiply(adamBV3.get(neurons), biasBeta2),
+                    scalarMultiply(vectorSquared(bgrads3.get(neurons)), (1 - biasBeta2))));
+            adamBV3.set(neurons, scalarDivide(adamBV3.get(neurons), (1 - Math.pow(biasBeta2, (epoch + 1)))));
         }
 
-        //5. update biases
+        // 5. update biases
 
         scaledMomentum1 = new ArrayList<ArrayList<Double>>();
         scaledMomentum2 = new ArrayList<ArrayList<Double>>();
@@ -789,52 +868,54 @@ public class FinalMNIST {
             scaledMomentum3.add(elementWiseDiv(adamBM3.get(neurons), vectorSqrt(scalarAdd(adamBV3.get(neurons), e))));
         }
 
-        for (int neurons =0; neurons < scaledMomentum1.size(); neurons++) {
+        for (int neurons = 0; neurons < scaledMomentum1.size(); neurons++) {
             biases1 = vectorSubtract(biases1, scalarMultiply(scaledMomentum1.get(neurons), learningRate));
         }
 
-        for (int neurons =  0; neurons < scaledMomentum2.size(); neurons++) {
+        for (int neurons = 0; neurons < scaledMomentum2.size(); neurons++) {
             biases2 = vectorSubtract(biases2, scalarMultiply(scaledMomentum2.get(neurons), learningRate));
         }
 
-        for (int neurons = 0 ; neurons < scaledMomentum3.size(); neurons++) {
+        for (int neurons = 0; neurons < scaledMomentum3.size(); neurons++) {
             biases3 = vectorSubtract(biases3, scalarMultiply(scaledMomentum3.get(neurons), learningRate));
         }
     }
 
     public static void nesterov() {
         for (int feature = 0; feature < weights1.size(); feature++) {
-            for(int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
-                weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) - momentum * velocity1.get(feature).get(neuron));
+            for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
+                weights1.get(feature).set(neuron,
+                        weights1.get(feature).get(neuron) - momentum * velocity1.get(feature).get(neuron));
             }
         }
 
         for (int feature = 0; feature < weights2.size(); feature++) {
-            for(int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
-                weights2.get(feature).set(neuron, weights2.get(feature).get(neuron) - momentum * velocity2.get(feature).get(neuron));
+            for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
+                weights2.get(feature).set(neuron,
+                        weights2.get(feature).get(neuron) - momentum * velocity2.get(feature).get(neuron));
             }
         }
 
         for (int feature = 0; feature < weights3.size(); feature++) {
-            for(int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
-                weights3.get(feature).set(neuron, weights3.get(feature).get(neuron) - momentum * velocity3.get(feature).get(neuron));
+            for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
+                weights3.get(feature).set(neuron,
+                        weights3.get(feature).get(neuron) - momentum * velocity3.get(feature).get(neuron));
             }
         }
     }
 
-    public static void multiThreadTrain() throws Exception{
+    public static void multiThreadTrain() throws Exception {
         ArrayList<ArrayList<ArrayList<Double>>> miniBatches = new ArrayList<ArrayList<ArrayList<Double>>>();
         ArrayList<ArrayList<ArrayList<Double>>> miniBatchesLabels = new ArrayList<ArrayList<ArrayList<Double>>>();
         ArrayList<ArrayList<Double>> currentData = new ArrayList<ArrayList<Double>>();
-        ArrayList<ArrayList<Double>> currentLabels  = new ArrayList<ArrayList<Double>>();
-        for (int i =0; i < x_train.size(); i++) {
+        ArrayList<ArrayList<Double>> currentLabels = new ArrayList<ArrayList<Double>>();
+        for (int i = 0; i < x_train.size(); i++) {
             if (currentData.size() == miniBatchSize) {
                 miniBatches.add(currentData);
                 miniBatchesLabels.add(currentLabels);
                 currentData = new ArrayList<ArrayList<Double>>();
                 currentLabels = new ArrayList<ArrayList<Double>>();
-            }
-            else {
+            } else {
                 currentData.add(x_train.get(i));
                 currentLabels.add(y_train.get(i));
             }
@@ -848,14 +929,14 @@ public class FinalMNIST {
         }
 
         System.out.println("Mini batches size : ");
-        for (int i =0; i < miniBatches.size(); i++) {
+        for (int i = 0; i < miniBatches.size(); i++) {
             System.out.println("LENGTH : " + miniBatches.get(i).size() + " " + miniBatchesLabels.get(i).size());
         }
         Thread.sleep(6000);
 
         ExecutorService threadPool = Executors.newFixedThreadPool(7);
         for (int epoch = 0; epoch < numEpochs; epoch++) {
-            for (int i =0; i < miniBatches.size(); i++) {
+            for (int i = 0; i < miniBatches.size(); i++) {
                 int finalI = i;
                 int finalEpoch = epoch;
                 threadPool.submit(() -> {
@@ -872,119 +953,131 @@ public class FinalMNIST {
 
     }
 
-    public static void weightUpdate(ArrayList<ArrayList<Double>> miniBatch, ArrayList<ArrayList<Double>> miniBatchLabel, double epoch) throws Exception{
-            HashMap<String, Object> allForward = forwardPropagation(miniBatch, weights1, weights2, weights3, biases1, biases2, biases3);
-            ArrayList<ArrayList<Double>> activation3 = (ArrayList<ArrayList<Double>>) allForward.get("activation3");
-            ArrayList<ArrayList<Double>> activation2 = (ArrayList<ArrayList<Double>>) allForward.get("activation2");
-            ArrayList<ArrayList<Double>> activation1 = (ArrayList<ArrayList<Double>>) allForward.get("activation1");
-            ArrayList<ArrayList<Double>> rawA3 = (ArrayList<ArrayList<Double>>) allForward.get("rawA3");
+    public static void weightUpdate(ArrayList<ArrayList<Double>> miniBatch, ArrayList<ArrayList<Double>> miniBatchLabel,
+            double epoch) throws Exception {
+        HashMap<String, Object> allForward = forwardPropagation(miniBatch, weights1, weights2, weights3, biases1,
+                biases2, biases3);
+        ArrayList<ArrayList<Double>> activation3 = (ArrayList<ArrayList<Double>>) allForward.get("activation3");
+        ArrayList<ArrayList<Double>> activation2 = (ArrayList<ArrayList<Double>>) allForward.get("activation2");
+        ArrayList<ArrayList<Double>> activation1 = (ArrayList<ArrayList<Double>>) allForward.get("activation1");
+        ArrayList<ArrayList<Double>> rawA3 = (ArrayList<ArrayList<Double>>) allForward.get("rawA3");
 
-            HashMap<String, Object> gradients = backpropagation(miniBatchLabel, activation3, rawA3, activation2, activation1);
-            ArrayList<ArrayList<Double>> gradients1 = (ArrayList<ArrayList<Double>>) gradients.get("gradients1");
-            ArrayList<ArrayList<Double>> gradients2 = (ArrayList<ArrayList<Double>>) gradients.get("gradients2");
-            ArrayList<ArrayList<Double>> gradients3 = (ArrayList<ArrayList<Double>>) gradients.get("gradients3");
-            ArrayList<ArrayList<Double>> bgradients1 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients1");
-            ArrayList<ArrayList<Double>> bgradients2 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients2");
-            ArrayList<ArrayList<Double>> bgradients3 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients3");
+        HashMap<String, Object> gradients = backpropagation(miniBatchLabel, activation3, rawA3, activation2,
+                activation1);
+        ArrayList<ArrayList<Double>> gradients1 = (ArrayList<ArrayList<Double>>) gradients.get("gradients1");
+        ArrayList<ArrayList<Double>> gradients2 = (ArrayList<ArrayList<Double>>) gradients.get("gradients2");
+        ArrayList<ArrayList<Double>> gradients3 = (ArrayList<ArrayList<Double>>) gradients.get("gradients3");
+        ArrayList<ArrayList<Double>> bgradients1 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients1");
+        ArrayList<ArrayList<Double>> bgradients2 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients2");
+        ArrayList<ArrayList<Double>> bgradients3 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients3");
 
-            HashMap<String, Object> allTestForward = forwardPropagation(x_test, weights1, weights2, weights3, biases1, biases2, biases3);
-            ArrayList<ArrayList<Double>> testA3 = (ArrayList<ArrayList<Double>>) allTestForward.get("activation3");
-            System.out.println("grad1 : " + gradients1);
-            System.out.println("grad2 : " + gradients2);
-            System.out.println("grad3 : " + gradients3);
+        HashMap<String, Object> allTestForward = forwardPropagation(x_test, weights1, weights2, weights3, biases1,
+                biases2, biases3);
+        ArrayList<ArrayList<Double>> testA3 = (ArrayList<ArrayList<Double>>) allTestForward.get("activation3");
+        System.out.println("grad1 : " + gradients1);
+        System.out.println("grad2 : " + gradients2);
+        System.out.println("grad3 : " + gradients3);
 
-            if (momentum == 0 && biasMomentum == 0) {
-                double m = miniBatch.size();
-                for (int feature = 0; feature < weights3.size(); feature++) {
-                    for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
-                        weights3.get(feature).set(neuron, weights3.get(feature).get(neuron) - (learningRate/m) * gradients3.get(feature).get(neuron));
-                    }
-                }
-
-                for (int feature = 0; feature < weights2.size(); feature++) {
-                    for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
-                        weights2.get(feature).set(neuron, weights2.get(feature).get(neuron) - (learningRate/m) * gradients2.get(feature).get(neuron));
-                    }
-                }
-
-                for (int feature = 0; feature < weights1.size(); feature++) {
-                    for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
-                        weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) - (learningRate/m) * gradients1.get(feature).get(neuron));
-                    }
-                }
-
-                for (int bgrad = 0; bgrad < bgradients1.size(); bgrad++) {
-                    biases1 = vectorSubtract(biases1, scalarMultiply(bgradients1.get(bgrad), biasLearningRate/m));
-                }
-
-                for (int bgrad = 0; bgrad < bgradients2.size(); bgrad++) {
-                    biases2 = vectorSubtract(biases2, scalarMultiply(bgradients2.get(bgrad), biasLearningRate/m));
-                }
-
-                for (int bgrad = 0; bgrad < bgradients3.size(); bgrad++) {
-                    biases3 = vectorSubtract(biases3, scalarMultiply(bgradients3.get(bgrad), biasLearningRate/m));
+        if (momentum == 0 && biasMomentum == 0) {
+            double m = miniBatch.size();
+            for (int feature = 0; feature < weights3.size(); feature++) {
+                for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
+                    weights3.get(feature).set(neuron, weights3.get(feature).get(neuron)
+                            - (learningRate / m) * gradients3.get(feature).get(neuron));
                 }
             }
 
-
-
-            if (biasMomentum > 0 || momentum > 0) {
-                System.out.println("bgradients1.size() : " + bgradients1.size() + " " + biasVelocity1.size());
-                useMomentum(gradients1, gradients2, gradients3, bgradients1, bgradients2, bgradients3);
+            for (int feature = 0; feature < weights2.size(); feature++) {
+                for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
+                    weights2.get(feature).set(neuron, weights2.get(feature).get(neuron)
+                            - (learningRate / m) * gradients2.get(feature).get(neuron));
+                }
             }
 
-            if (adam) {
-                adam(gradients1, gradients2, gradients3, bgradients1, bgradients2, bgradients3, epoch, miniBatch.size());
+            for (int feature = 0; feature < weights1.size(); feature++) {
+                for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
+                    weights1.get(feature).set(neuron, weights1.get(feature).get(neuron)
+                            - (learningRate / m) * gradients1.get(feature).get(neuron));
+                }
             }
 
+            for (int bgrad = 0; bgrad < bgradients1.size(); bgrad++) {
+                biases1 = vectorSubtract(biases1, scalarMultiply(bgradients1.get(bgrad), biasLearningRate / m));
+            }
 
-                double trainCorrect = amountCorrect(activation3, miniBatchLabel) * 100 / miniBatchSize;
-                double valCorrect = amountCorrect(testA3, y_test) * 100 / y_test.size();
-                System.out.println("Correct training : " + trainCorrect);
-                System.out.println("Correct validation : " + valCorrect);
-                ArrayList<Double> pastCorrect = new ArrayList<Double>();
-                pastCorrect.add(trainCorrect);
-                pastCorrect.add(valCorrect);
-                pastCorrects.add(pastCorrect);
-                System.out.println("Past corrects : " + pastCorrects);
+            for (int bgrad = 0; bgrad < bgradients2.size(); bgrad++) {
+                biases2 = vectorSubtract(biases2, scalarMultiply(bgradients2.get(bgrad), biasLearningRate / m));
+            }
 
-                ArrayList<Double> pastLoss = new ArrayList<Double>();
-                pastLoss.add(getLosses(activation3, miniBatchLabel));
-                pastLoss.add(getLosses(testA3, y_test));
-                pastLosses.add(pastLoss);
-                System.out.println("Past losses : " + pastLosses);
-                Thread.sleep(3000);
+            for (int bgrad = 0; bgrad < bgradients3.size(); bgrad++) {
+                biases3 = vectorSubtract(biases3, scalarMultiply(bgradients3.get(bgrad), biasLearningRate / m));
+            }
+        }
+
+        if (biasMomentum > 0 || momentum > 0) {
+            System.out.println("bgradients1.size() : " + bgradients1.size() + " " + biasVelocity1.size());
+            useMomentum(gradients1, gradients2, gradients3, bgradients1, bgradients2, bgradients3);
+        }
+
+        if (adam) {
+            adam(gradients1, gradients2, gradients3, bgradients1, bgradients2, bgradients3, epoch, miniBatch.size());
+        }
+
+        double trainCorrect = amountCorrect(activation3, miniBatchLabel) * 100 / miniBatchSize;
+        double valCorrect = amountCorrect(testA3, y_test) * 100 / y_test.size();
+        System.out.println("Correct training : " + trainCorrect);
+        System.out.println("Correct validation : " + valCorrect);
+        ArrayList<Double> pastCorrect = new ArrayList<Double>();
+        pastCorrect.add(trainCorrect);
+        pastCorrect.add(valCorrect);
+        pastCorrects.add(pastCorrect);
+        System.out.println("Past corrects : " + pastCorrects);
+
+        ArrayList<Double> pastLoss = new ArrayList<Double>();
+        pastLoss.add(getLosses(activation3, miniBatchLabel));
+        pastLoss.add(getLosses(testA3, y_test));
+        pastLosses.add(pastLoss);
+        System.out.println("Past losses : " + pastLosses);
+        Thread.sleep(3000);
     }
 
-    public static void main(String[]args) throws Exception{
+    public static void main(String[] args) throws Exception {
         getTrainData();
         getValidationData();
-        if (adam) {adamInit();}
+        if (adam) {
+            adamInit();
+        }
         paramInit();
         XavierInit();
         biasMomentumInit();
 
-        FileInputStream fis = new FileInputStream("/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/weights1_10k_GDLOCAL4_7.tmp");
+        FileInputStream fis = new FileInputStream(
+                "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/weights1_10k_GDLOCAL4_7.tmp");
         ObjectInputStream ois = new ObjectInputStream(fis);
         weights1 = (ArrayList<ArrayList<Double>>) ois.readObject();
 
-        fis = new FileInputStream("/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/weights2_10k_GDLOCAL4_7.tmp");
+        fis = new FileInputStream(
+                "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/weights2_10k_GDLOCAL4_7.tmp");
         ois = new ObjectInputStream(fis);
         weights2 = (ArrayList<ArrayList<Double>>) ois.readObject();
 
-        fis = new FileInputStream("/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/weights3_10k_GDLOCAL4_7.tmp");
+        fis = new FileInputStream(
+                "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/weights3_10k_GDLOCAL4_7.tmp");
         ois = new ObjectInputStream(fis);
         weights3 = (ArrayList<ArrayList<Double>>) ois.readObject();
 
-        fis = new FileInputStream("/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/biases1_10k_GDLOCAL4_7.tmp");
+        fis = new FileInputStream(
+                "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/biases1_10k_GDLOCAL4_7.tmp");
         ois = new ObjectInputStream(fis);
         biases1 = (ArrayList<Double>) ois.readObject();
 
-        fis = new FileInputStream("/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/biases2_10k_GDLOCAL4_7.tmp");
+        fis = new FileInputStream(
+                "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/biases2_10k_GDLOCAL4_7.tmp");
         ois = new ObjectInputStream(fis);
         biases2 = (ArrayList<Double>) ois.readObject();
 
-        fis = new FileInputStream("/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/biases3_10k_GDLOCAL4_7.tmp");
+        fis = new FileInputStream(
+                "/Users/anish/Documents/Java Fun/ML Java/src/MNIST_DNN/params/biases3_10k_GDLOCAL4_7.tmp");
         ois = new ObjectInputStream(fis);
         biases3 = (ArrayList<Double>) ois.readObject();
 
@@ -995,19 +1088,29 @@ public class FinalMNIST {
         System.out.println("Shape : " + weights3.size() + " " + weights3.get(0).size());
         System.out.println("Biases : " + biases1.size() + " " + biases2.size() + " " + biases3.size());
 
-
         System.out.println("VAR 1 : " + variance(flatten2D(weights1)));
         System.out.println("VAR 2 : " + variance(flatten2D(weights2)));
         System.out.println("VAR 3 : " + variance(flatten2D(weights3)));
 
-        /*HashMap<String, Object> allForward = forwardPropagation(x_train, weights1, weights2, weights3);
-        System.out.println("Shape : " + ((ArrayList<ArrayList<Double>>) allForward.get("activation3")).size() + " " + ((ArrayList<ArrayList<Double>>) allForward.get("activation3")).get(0).size());
-        System.out.println("Shape : " + ((ArrayList<ArrayList<Double>>) allForward.get("activation2")).size() + " " + ((ArrayList<ArrayList<Double>>) allForward.get("activation2")).get(0).size());
-        System.out.println("Shape : " + ((ArrayList<ArrayList<Double>>) allForward.get("activation1")).size() + " " + ((ArrayList<ArrayList<Double>>) allForward.get("activation1")).get(0).size());*/ //check activations
+        /*
+         * HashMap<String, Object> allForward = forwardPropagation(x_train, weights1,
+         * weights2, weights3);
+         * System.out.println("Shape : " + ((ArrayList<ArrayList<Double>>)
+         * allForward.get("activation3")).size() + " " + ((ArrayList<ArrayList<Double>>)
+         * allForward.get("activation3")).get(0).size());
+         * System.out.println("Shape : " + ((ArrayList<ArrayList<Double>>)
+         * allForward.get("activation2")).size() + " " + ((ArrayList<ArrayList<Double>>)
+         * allForward.get("activation2")).get(0).size());
+         * System.out.println("Shape : " + ((ArrayList<ArrayList<Double>>)
+         * allForward.get("activation1")).size() + " " + ((ArrayList<ArrayList<Double>>)
+         * allForward.get("activation1")).get(0).size());
+         */ // check activations
 
         for (int epoch = 0; epoch < numEpochs; epoch++) {
-            //if (epoch % 3  == 0 ) {learningRate = learningRate * 0.1; biasLearningRate = biasLearningRate * 0.1;}
-            HashMap<String, Object> allForward = forwardPropagation(x_train, weights1, weights2, weights3, biases1, biases2, biases3);
+            // if (epoch % 3 == 0 ) {learningRate = learningRate * 0.1; biasLearningRate =
+            // biasLearningRate * 0.1;}
+            HashMap<String, Object> allForward = forwardPropagation(x_train, weights1, weights2, weights3, biases1,
+                    biases2, biases3);
             ArrayList<ArrayList<Double>> activation3 = (ArrayList<ArrayList<Double>>) allForward.get("activation3");
             ArrayList<ArrayList<Double>> activation2 = (ArrayList<ArrayList<Double>>) allForward.get("activation2");
             ArrayList<ArrayList<Double>> activation1 = (ArrayList<ArrayList<Double>>) allForward.get("activation1");
@@ -1022,8 +1125,9 @@ public class FinalMNIST {
             ArrayList<ArrayList<Double>> bgradients2 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients2");
             ArrayList<ArrayList<Double>> bgradients3 = (ArrayList<ArrayList<Double>>) gradients.get("bgradients3");
 
-            HashMap<String, Object> allTestForward = forwardPropagation(x_test, weights1, weights2, weights3, biases1, biases2, biases3);
-            ArrayList<ArrayList<Double>> testA3 = (ArrayList<ArrayList<Double>>)  allTestForward.get("activation3");
+            HashMap<String, Object> allTestForward = forwardPropagation(x_test, weights1, weights2, weights3, biases1,
+                    biases2, biases3);
+            ArrayList<ArrayList<Double>> testA3 = (ArrayList<ArrayList<Double>>) allTestForward.get("activation3");
             System.out.println("grad1 : " + gradients1);
             System.out.println("grad2 : " + gradients2);
             System.out.println("grad3 : " + gradients3);
@@ -1032,32 +1136,35 @@ public class FinalMNIST {
                 double m = x_train.size();
                 for (int feature = 0; feature < weights3.size(); feature++) {
                     for (int neuron = 0; neuron < weights3.get(feature).size(); neuron++) {
-                        weights3.get(feature).set(neuron, weights3.get(feature).get(neuron) - (learningRate/m) * gradients3.get(feature).get(neuron));
+                        weights3.get(feature).set(neuron, weights3.get(feature).get(neuron)
+                                - (learningRate / m) * gradients3.get(feature).get(neuron));
                     }
                 }
 
                 for (int feature = 0; feature < weights2.size(); feature++) {
                     for (int neuron = 0; neuron < weights2.get(feature).size(); neuron++) {
-                        weights2.get(feature).set(neuron, weights2.get(feature).get(neuron) - (learningRate/m) * gradients2.get(feature).get(neuron));
+                        weights2.get(feature).set(neuron, weights2.get(feature).get(neuron)
+                                - (learningRate / m) * gradients2.get(feature).get(neuron));
                     }
                 }
 
                 for (int feature = 0; feature < weights1.size(); feature++) {
                     for (int neuron = 0; neuron < weights1.get(feature).size(); neuron++) {
-                        weights1.get(feature).set(neuron, weights1.get(feature).get(neuron) - (learningRate/m) * gradients1.get(feature).get(neuron));
+                        weights1.get(feature).set(neuron, weights1.get(feature).get(neuron)
+                                - (learningRate / m) * gradients1.get(feature).get(neuron));
                     }
                 }
 
                 for (int bgrad = 0; bgrad < bgradients1.size(); bgrad++) {
-                    biases1 = vectorSubtract(biases1, scalarMultiply(bgradients1.get(bgrad), biasLearningRate/m));
+                    biases1 = vectorSubtract(biases1, scalarMultiply(bgradients1.get(bgrad), biasLearningRate / m));
                 }
 
-                for (int bgrad = 0; bgrad< bgradients2.size(); bgrad++) {
-                    biases2 = vectorSubtract(biases2, scalarMultiply(bgradients2.get(bgrad), biasLearningRate/m));
+                for (int bgrad = 0; bgrad < bgradients2.size(); bgrad++) {
+                    biases2 = vectorSubtract(biases2, scalarMultiply(bgradients2.get(bgrad), biasLearningRate / m));
                 }
 
                 for (int bgrad = 0; bgrad < bgradients3.size(); bgrad++) {
-                    biases3 = vectorSubtract(biases3, scalarMultiply(bgradients3.get(bgrad), biasLearningRate/m));
+                    biases3 = vectorSubtract(biases3, scalarMultiply(bgradients3.get(bgrad), biasLearningRate / m));
                 }
             }
 
@@ -1065,9 +1172,8 @@ public class FinalMNIST {
                 useMomentum(gradients1, gradients2, gradients3, bgradients1, bgradients2, bgradients3);
             }
 
-
-            double trainCorrect = amountCorrect(activation3, y_train) * 100/y_train.size();
-            double valCorrect = amountCorrect(testA3, y_test) * 100/y_test.size();
+            double trainCorrect = amountCorrect(activation3, y_train) * 100 / y_train.size();
+            double valCorrect = amountCorrect(testA3, y_test) * 100 / y_test.size();
             System.out.println("Correct training : " + trainCorrect);
             System.out.println("Correct validation : " + valCorrect);
             ArrayList<Double> pastCorrect = new ArrayList<Double>();
@@ -1082,7 +1188,6 @@ public class FinalMNIST {
             pastLosses.add(pastLoss);
             System.out.println("Past losses : " + pastLosses);
             Thread.sleep(3000);
-
 
         }
         saveWeights();
@@ -1109,7 +1214,6 @@ public class FinalMNIST {
         oos = new ObjectOutputStream(fos);
         oos.writeObject(biases2);
 
-
         fos = new FileOutputStream("biases3_10k_GDLOCAL4_8.tmp");
         oos = new ObjectOutputStream(fos);
         oos.writeObject(biases3);
@@ -1117,19 +1221,21 @@ public class FinalMNIST {
         oos.close();
     }
 
-    public static ArrayList<Integer> shape(ArrayList<ArrayList<Double>> x ) {
+    public static ArrayList<Integer> shape(ArrayList<ArrayList<Double>> x) {
         ArrayList<Integer> full = new ArrayList<Integer>();
         full.add(x.size());
         full.add(x.get(0).size());
         return full;
     }
 
-    public static ArrayList<Double> mostCommonLabels (ArrayList<ArrayList<Double>> a3) {
+    public static ArrayList<Double> mostCommonLabels(ArrayList<ArrayList<Double>> a3) {
         ArrayList<Double> newPred = new ArrayList<Double>();
         for (int pred = 0; pred < a3.size(); pred++) {
             double highest_pred = 0;
             for (int output = 0; output < a3.get(pred).size(); output++) {
-                if (highest_pred < a3.get(pred).get(output)) {highest_pred = a3.get(pred).get(output);}
+                if (highest_pred < a3.get(pred).get(output)) {
+                    highest_pred = a3.get(pred).get(output);
+                }
             }
             newPred.add((double) a3.get(pred).indexOf(highest_pred));
         }
@@ -1139,7 +1245,9 @@ public class FinalMNIST {
     public static double mostCommonLabel(ArrayList<Double> activation) {
         double highest_pred = 0;
         for (int output = 0; output < activation.size(); output++) {
-            if (activation.get(output) > highest_pred) {highest_pred = activation.get(output);}
+            if (activation.get(output) > highest_pred) {
+                highest_pred = activation.get(output);
+            }
         }
 
         return (double) activation.indexOf(highest_pred);
@@ -1151,8 +1259,10 @@ public class FinalMNIST {
         int correct = 0;
         System.out.println("Yh : " + newYh);
         System.out.println("LBL: " + newLabels);
-        for (int i =0; i < newYh.size(); i++) {
-            if (newLabels.get(i).equals(newYh.get(i))) {correct += 1;}
+        for (int i = 0; i < newYh.size(); i++) {
+            if (newLabels.get(i).equals(newYh.get(i))) {
+                correct += 1;
+            }
         }
         return correct;
     }
@@ -1167,7 +1277,7 @@ public class FinalMNIST {
 
     public static ArrayList<ArrayList<Double>> softmaxActivation(ArrayList<ArrayList<Double>> activ) {
         ArrayList<ArrayList<Double>> newActivation = new ArrayList<ArrayList<Double>>();
-        for (int i =0; i < activ.size(); i++) {
+        for (int i = 0; i < activ.size(); i++) {
             newActivation.add(softmax(activ.get(i)));
         }
         return newActivation;
@@ -1181,16 +1291,17 @@ public class FinalMNIST {
             for (int i = 0; i < x.size(); i++) {
                 denum += Math.exp(x.get(i));
             }
-            probabilities.add(num/denum);
+            probabilities.add(num / denum);
         }
         return probabilities;
     }
 
     public static double reverseELU(double x) {
         double output = 0;
-        if (x > 0) {output = x;}
-        else {
-            output = (x/alpha) + 1;
+        if (x > 0) {
+            output = x;
+        } else {
+            output = (x / alpha) + 1;
         }
         return output;
     }
@@ -1199,11 +1310,10 @@ public class FinalMNIST {
         ArrayList<ArrayList<Double>> jacobian = new ArrayList<ArrayList<Double>>();
         for (int i = 0; i < output.size(); i++) {
             ArrayList<Double> currentRow = new ArrayList<Double>();
-            for (int j = 0 ; j < output.size(); j++) {
+            for (int j = 0; j < output.size(); j++) {
                 if (i == j) {
                     currentRow.add(-1 * output.get(i) * (1 - output.get(j)));
-                }
-                else {
+                } else {
                     currentRow.add(-1 * output.get(i) * output.get(j));
                 }
             }
@@ -1222,8 +1332,8 @@ public class FinalMNIST {
 
     public static ArrayList<Double> elementWiseDiv(ArrayList<Double> x, ArrayList<Double> y) {
         ArrayList<Double> z = new ArrayList<Double>();
-        for (int i =0; i < x.size(); i++) {
-            z.add(x.get(i)/y.get(i));
+        for (int i = 0; i < x.size(); i++) {
+            z.add(x.get(i) / y.get(i));
         }
         return z;
     }
@@ -1235,7 +1345,6 @@ public class FinalMNIST {
         }
         return z;
     }
-
 
     public static ArrayList<Double> scalarDivide(ArrayList<Double> vector, double x) {
         ArrayList<Double> z = new ArrayList<Double>();
@@ -1279,7 +1388,7 @@ public class FinalMNIST {
 
     public static ArrayList<Double> vectorAdd(ArrayList<Double> x, ArrayList<Double> y) {
         ArrayList<Double> z = new ArrayList<Double>();
-        for (int i =0; i < x.size(); i++) {
+        for (int i = 0; i < x.size(); i++) {
             z.add(x.get(i) + y.get(i));
         }
         return z;
@@ -1287,24 +1396,28 @@ public class FinalMNIST {
 
     public static ArrayList<Double> vectorSubtract(ArrayList<Double> x, ArrayList<Double> y) {
         ArrayList<Double> z = new ArrayList<Double>();
-        for (int i =0; i < x.size(); i++) {
+        for (int i = 0; i < x.size(); i++) {
             z.add(x.get(i) - y.get(i));
         }
         return z;
     }
 
     public static double variance(ArrayList<Double> x) {
-        //first get mean
+        // first get mean
         double meanSum = 0;
-        for (int i = 0; i < x.size(); i++) {meanSum += x.get(i);}
-        double mean = meanSum/x.size();
+        for (int i = 0; i < x.size(); i++) {
+            meanSum += x.get(i);
+        }
+        double mean = meanSum / x.size();
 
         double numerator = 0;
-        for (int i = 0; i < x.size(); i++) {numerator += (x.get(i) - mean) * (x.get(i) - mean);}
-        return numerator/x.size();
+        for (int i = 0; i < x.size(); i++) {
+            numerator += (x.get(i) - mean) * (x.get(i) - mean);
+        }
+        return numerator / x.size();
     }
 
-    public static ArrayList<Double> flatten2D (ArrayList<ArrayList<Double>> x) {
+    public static ArrayList<Double> flatten2D(ArrayList<ArrayList<Double>> x) {
         ArrayList<Double> flattenedStuff = new ArrayList<Double>();
         for (int row = 0; row < x.size(); row++) {
             for (int col = 0; col < x.get(row).size(); col++) {
@@ -1315,7 +1428,7 @@ public class FinalMNIST {
     }
 
     public static ArrayList<ArrayList<Double>> gradClip(ArrayList<ArrayList<Double>> grads) {
-        for (int feature = 0 ; feature < grads.size(); feature++) {
+        for (int feature = 0; feature < grads.size(); feature++) {
             for (int neuron = 0; neuron < grads.get(feature).size(); neuron++) {
                 if (grads.get(feature).get(neuron) > gradClip) {
                     grads.get(feature).set(neuron, gradClip);
@@ -1327,6 +1440,5 @@ public class FinalMNIST {
         }
         return grads;
     }
-
 
 }
